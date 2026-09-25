@@ -1,0 +1,255 @@
+================================================================================
+ZEPTO DATA PLATFORM — MODULE 1 SQL QUERY EXECUTION LOG
+================================================================================
+
+[1] Query 1: Top 5 Most Expensive In-Stock Books (Demonstrates SELECT, WHERE, ORDER BY, LIMIT)
+----------------------------------------------------------------------------------------------
+SQL QUERY:
+SELECT 
+    book_id,
+    title,
+    price_gbp,
+    price_inr,
+    rating
+FROM books
+WHERE in_stock = 1
+ORDER BY price_inr DESC
+LIMIT 5;
+
+OUTPUT ROWS: 5
+ book_id                                                                  title  price_gbp  price_inr  rating
+      15                                          Boar Island (Anna Pigeon #19)      59.48    6275.14       3
+      76                                                                Candide      58.63    6185.46       3
+      28 The No. 1 Ladies' Detective Agency (No. 1 Ladies' Detective Agency #1)      57.70    6087.35       4
+     123                                                               El Deafo      57.62    6078.91       5
+      77                                                            Animal Farm      57.22    6036.71       3
+
+================================================================================
+
+[2] Query 2: Distinct Star Ratings for Premium Books (Demonstrates DISTINCT, WHERE)
+-----------------------------------------------------------------------------------
+SQL QUERY:
+SELECT DISTINCT 
+    rating
+FROM books
+WHERE price_inr > 2500.00
+ORDER BY rating ASC;
+
+OUTPUT ROWS: 5
+ rating
+      1
+      2
+      3
+      4
+      5
+
+================================================================================
+
+[3] Query 3: Affordable Highly-Rated Books (Demonstrates BETWEEN, AND, ORDER BY)
+--------------------------------------------------------------------------------
+SQL QUERY:
+SELECT 
+    book_id,
+    title,
+    rating,
+    price_inr
+FROM books
+WHERE price_inr BETWEEN 1500.00 AND 4000.00
+  AND rating >= 4
+ORDER BY rating DESC, price_inr ASC;
+
+OUTPUT ROWS: 30
+ book_id                                                                         title  rating  price_inr
+     113                                      Batman: The Dark Knight Returns (Batman)       5    1622.59
+      58                             A Spy's Devotion (The Regency Spies of London #1)       5    1790.33
+      53                                                        Between Shades of Gray       5    2193.34
+      48                                                        Voyager (Outlander #3)       5    2222.89
+     138                                 Saga, Volume 3 (Saga (Collected Editions) #3)       5    2275.64
+      23                                             The Silkworm (Cormoran Strike #2)       5    2431.78
+      18             What Happened on Beale Street (Secrets of the South Mysteries #2)       5    2676.54
+      69                                            1,000 Places to See Before You Die       5    2751.44
+      46                                                         The Passion of Dolssa       5    2987.76
+      37                                                                  Mrs. Houdini       5    3191.38
+     162                   Bleach, Vol. 1: Strawberry and the Soul Reapers (Bleach #1)       5    3655.58
+      49                                                                  The Red Tent       5    3762.13
+      70                                                             The Secret Garden       4    1590.94
+      98                        Outcast, Vol. 1: A Darkness Surrounds Him (Outcast #1)       4    1628.92
+     108                                                                 Camp Midnight       4    1801.94
+     149                        Y: The Last Man, Vol. 1: Unmanned (Y: The Last Man #1)       4    1952.80
+      91                                                               This One Summer       4    2056.19
+      20                              Delivering the Truth (Quaker Midwife Mystery #1)       4    2203.90
+     130                                      Fruits Basket, Vol. 6 (Fruits Basket #6)       4    2211.28
+     156                                        Paper Girls, Vol. 1 (Paper Girls #1-5)       4    2290.41
+      21                           The Mysterious Affair at Styles (Hercule Poirot #1)       4    2616.40
+      80 The Complete Stories and Poems (The Works of Edgar Allan Poe [Cameo Edition])       4    2825.29
+      57                                                         Lost Among the Living       4    2922.35
+      74                                                Little Women (Little Women #1)       4    2961.38
+      38                                                     The Marriage of Opposites       4    2962.44
+      45                               World Without End (The Pillars of the Earth #2)       4    3478.34
+     127                                      Fruits Basket, Vol. 9 (Fruits Basket #9)       4    3581.73
+     118                            So Cute It Hurts!!, Vol. 6 (So Cute It Hurts!! #6)       4    3737.86
+     107                           Codename Baboushka, Volume 1: The Conclave of Death       4    3873.96
+     114              Wonder Woman: Earth One, Volume One (Wonder Woman: Earth One #1)       4    3939.37
+
+================================================================================
+
+[4] Query 4: Books Filtered by Specific Categories (Demonstrates IN, JOIN, WHERE)
+---------------------------------------------------------------------------------
+SQL QUERY:
+SELECT 
+    b.book_id,
+    b.title,
+    c.category_name,
+    b.price_inr,
+    b.rating
+FROM books b
+JOIN categories c ON b.category_id = c.category_id
+WHERE c.category_name IN ('Mystery', 'Historical Fiction', 'Travel')
+ORDER BY c.category_name, b.price_inr DESC;
+
+OUTPUT ROWS: 69
+ book_id                                                                                             title      category_name  price_inr  rating
+      50                                                                  The Last Painting of Sara de Vos Historical Fiction    5860.52       2
+      35                                                           A Flight of Arrows (The Pathfinders #2) Historical Fiction    5858.42       5
+      33                                                                                Tipping the Velvet Historical Fiction    5669.57       1
+      51                                                 The Guernsey Literary and Potato Peel Pie Society Historical Fiction    5225.42       1
+      52                                                                             Girl in the Blue Coat Historical Fiction    4940.56       2
+      39                                                   Glory over Everything: Beyond The Kitchen House Historical Fiction    4836.12       3
+      54                                                                               While You Were Mine Historical Fiction    4359.26       5
+      41                                                                                 A Paris Apartment Historical Fiction    4115.55       4
+      44                                                                            The Invention of Wings Historical Fiction    3939.37       1
+      36                                                                             The House by the Lake Historical Fiction    3898.23       1
+      49                                                                                      The Red Tent Historical Fiction    3762.13       5
+      55                                                                                 The Secret Healer Historical Fiction    3646.08       3
+      45                                                   World Without End (The Pillars of the Earth #2) Historical Fiction    3478.34       4
+      37                                                                                      Mrs. Houdini Historical Fiction    3191.38       5
+      34                         Forever and Forever: The Courtship of Henry Longfellow and Fanny Appleton Historical Fiction    3132.30       3
+      46                                                                             The Passion of Dolssa Historical Fiction    2987.76       5
+      38                                                                         The Marriage of Opposites Historical Fiction    2962.44       4
+      57                                                                             Lost Among the Living Historical Fiction    2922.35       4
+      47                                                                         Girl With a Pearl Earring Historical Fiction    2824.24       1
+      56                                                                                          Starlark Historical Fiction    2725.06       3
+      48                                                                            Voyager (Outlander #3) Historical Fiction    2222.89       5
+      53                                                                            Between Shades of Gray Historical Fiction    2193.34       5
+      40                                                                              Love, Lies and Spies Historical Fiction    2168.02       2
+      42                                                                                       Lilac Girls Historical Fiction    1823.04       2
+      58                                                 A Spy's Devotion (The Regency Spies of London #1) Historical Fiction    1790.33       5
+      43                                                        The Constant Princess (The Tudor Court #1) Historical Fiction    1753.41       3
+      15                                                                     Boar Island (Anna Pigeon #19)            Mystery    6275.14       3
+      28                            The No. 1 Ladies' Detective Agency (No. 1 Ladies' Detective Agency #1)            Mystery    6087.35       4
+       3                                                                               The Past Never Ends            Mystery    5960.75       4
+      12                                             Murder at the 42nd Street Library (Raymond Ambler #1)            Mystery    5734.98       4
+       6                                                                    The Last Mile (Amos Decker #2)            Mystery    5719.16       2
+      32                                                               1st to Die (Women's Murder Club #1)            Mystery    5694.89       1
+      19                          The Bachelor Girl's Guide to Murder (Herringford and Watts Mysteries #1)            Mystery    5517.65       5
+       9                                                            A Time of Torment (Charlie Parker #14)            Mystery    5100.92       5
+       1                                                                                     Sharp Objects            Mystery    5045.01       4
+       5                                                   The Murder of Roger Ackroyd (Hercule Poirot #4)            Mystery    4652.55       4
+      24                                                                                        The Exiled            Mystery    4583.98       3
+      22                                                             In the Woods (Dublin Murder Squad #1)            Mystery    4049.09       2
+      13                                                                                       Most Wanted            Mystery    3722.04       3
+      16                                                                                         The Widow            Mystery    2875.93       2
+      11                                                                  Poisonous (Max Revere Novels #3)            Mystery    2827.40       3
+      26                                                                Extreme Prey (Lucas Davenport #26)            Mystery    2679.70       3
+      18                                 What Happened on Beale Street (Secrets of the South Mysteries #2)            Mystery    2676.54       5
+      21                                               The Mysterious Affair at Styles (Hercule Poirot #1)            Mystery    2616.40       4
+      27                                                               Career of Evil (Cormoran Strike #3)            Mystery    2607.96       2
+      23                                                                 The Silkworm (Cormoran Strike #2)            Mystery    2431.78       5
+      20                                                  Delivering the Truth (Quaker Midwife Mystery #1)            Mystery    2203.90       4
+      31                                                              Blood Defense (Samantha Brinkman #1)            Mystery    2141.65       3
+       2                                                                              In a Dark, Dark Wood            Mystery    2070.96       1
+      25                                                         The Cuckoo's Calling (Cormoran Strike #1)            Mystery    2026.66       1
+      10                                                           A Study in Scarlet (Sherlock Holmes #1)            Mystery    1765.02       2
+       4                                                                                  A Murder in Time            Mystery    1755.52       1
+      30                                                         The Girl In The Ice (DCI Erika Foster #1)            Mystery    1672.18       3
+       7                                                            That Darkness (Gardiner and Renner #1)            Mystery    1468.56       1
+      17                                                                                 Playing with Fire            Mystery    1446.41       3
+      29                                                                                 The Girl You Lost            Mystery    1296.59       5
+      14                                                                        Hide Away (Eve Duncan #20)            Mystery    1249.12       1
+       8                                                              Tastes Like Fear (DI Marnie Rome #3)            Mystery    1127.79       1
+      66                                                                  A Year in Provence (Provence #1)             Travel    6000.84       4
+      60                                  Full Moon over Noah’s Ark: An Odyssey to Mount Ararat and Beyond             Travel    5214.86       4
+      61                                See America: A Celebration of Our National Parks & Treasured Sites             Travel    5155.78       3
+      59                                                                           It's Only the Himalayas             Travel    4765.44       2
+      64                                                                                A Summer In Europe             Travel    4677.87       2
+      68                                                         Neither Here nor There: Travels in Europe             Travel    4109.23       3
+      63                                                                              Under the Tuscan Sun             Travel    3938.31       3
+      62                               Vagabonding: An Uncommon Guide to the Art of Long-Term World Travel             Travel    3897.17       2
+      65                                                                          The Great Railway Bazaar             Travel    3221.97       1
+      69                                                                1,000 Places to See Before You Die             Travel    2751.44       5
+      67 The Road to Little Dribbling: Adventures of an American in Britain (Notes From a Small Island #2)             Travel    2448.66       1
+
+================================================================================
+
+[5] Query 5: Relational JOIN of Books with Category Information (Demonstrates JOIN, ORDER BY)
+---------------------------------------------------------------------------------------------
+SQL QUERY:
+SELECT 
+    b.book_id,
+    b.title,
+    c.category_name,
+    b.price_gbp,
+    b.price_inr,
+    b.rating,
+    b.in_stock
+FROM books b
+INNER JOIN categories c ON b.category_id = c.category_id
+WHERE b.rating = 5
+ORDER BY b.price_inr DESC;
+
+OUTPUT ROWS: 26
+ book_id                                                                             title      category_name  price_gbp  price_inr  rating  in_stock
+     123                                                                          El Deafo     Sequential Art      57.62    6078.91       5         1
+     137                     The Sandman, Vol. 3: Dream Country (The Sandman (volumes) #3)     Sequential Art      55.55    5860.52       5         1
+      35                                           A Flight of Arrows (The Pathfinders #2) Historical Fiction      55.53    5858.42       5         1
+      19          The Bachelor Girl's Guide to Murder (Herringford and Watts Mysteries #1)            Mystery      52.30    5517.65       5         1
+      89                           Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)     Sequential Art      52.29    5516.60       5         1
+       9                                            A Time of Torment (Charlie Parker #14)            Mystery      48.35    5100.92       5         1
+     155         Rat Queens, Vol. 1: Sass & Sorcery (Rat Queens (Collected Editions) #1-5)     Sequential Art      46.96    4954.28       5         1
+      54                                                               While You Were Mine Historical Fiction      41.32    4359.26       5         1
+     161                                          Fruits Basket, Vol. 1 (Fruits Basket #1)     Sequential Art      40.28    4249.54       5         1
+      49                                                                      The Red Tent Historical Fiction      35.66    3762.13       5         1
+     162                       Bleach, Vol. 1: Strawberry and the Soul Reapers (Bleach #1)     Sequential Art      34.65    3655.58       5         1
+      37                                                                      Mrs. Houdini Historical Fiction      30.25    3191.38       5         1
+      46                                                             The Passion of Dolssa Historical Fiction      28.32    2987.76       5         1
+      69                                                1,000 Places to See Before You Die             Travel      26.08    2751.44       5         1
+      18                 What Happened on Beale Street (Secrets of the South Mysteries #2)            Mystery      25.37    2676.54       5         1
+      23                                                 The Silkworm (Cormoran Strike #2)            Mystery      23.05    2431.78       5         1
+     138                                     Saga, Volume 3 (Saga (Collected Editions) #3)     Sequential Art      21.57    2275.64       5         1
+      48                                                            Voyager (Outlander #3) Historical Fiction      21.07    2222.89       5         1
+      53                                                            Between Shades of Gray Historical Fiction      20.79    2193.34       5         1
+      58                                 A Spy's Devotion (The Regency Spies of London #1) Historical Fiction      16.97    1790.33       5         1
+     113                                          Batman: The Dark Knight Returns (Batman)     Sequential Art      15.38    1622.59       5         1
+     128                                                                       Roller Girl     Sequential Art      14.10    1487.55       5         1
+      95 Princess Jellyfish 2-in-1 Omnibus, Vol. 01 (Princess Jellyfish 2-in-1 Omnibus #1)     Sequential Art      13.61    1435.86       5         1
+      29                                                                 The Girl You Lost            Mystery      12.29    1296.59       5         1
+     117                     Superman Vol. 1: Before Truth (Superman by Gene Luen Yang #1)     Sequential Art      11.89    1254.40       5         1
+     148                                          Fruits Basket, Vol. 2 (Fruits Basket #2)     Sequential Art      11.64    1228.02       5         1
+
+================================================================================
+
+[6] Query 6: Category Aggregation & Health Summary (Demonstrates JOIN, GROUP BY, Aggregates)
+--------------------------------------------------------------------------------------------
+SQL QUERY:
+SELECT 
+    c.category_name,
+    COUNT(b.book_id) AS total_books,
+    SUM(b.in_stock) AS in_stock_count,
+    ROUND(AVG(b.price_inr), 2) AS avg_price_inr,
+    MIN(b.price_inr) AS min_price_inr,
+    MAX(b.price_inr) AS max_price_inr
+FROM categories c
+LEFT JOIN books b ON c.category_id = b.category_id
+GROUP BY c.category_id, c.category_name
+ORDER BY total_books DESC;
+
+OUTPUT ROWS: 5
+     category_name  total_books  in_stock_count  avg_price_inr  min_price_inr  max_price_inr
+    Sequential Art           75              75        3647.37        1071.88        6078.91
+           Mystery           32              32        3346.36        1127.79        6275.14
+Historical Fiction           26              26        3549.47        1753.41        5860.52
+          Classics           19              19        3855.53        1563.51        6185.46
+            Travel           11              11        4198.32        2448.66        6000.84
+
+================================================================================
+

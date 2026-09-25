@@ -1,0 +1,13 @@
+Zepto Order Tracking Policy
+
+1. Real-Time GPS Tracking
+Once an order is confirmed, customers can view live real-time GPS tracking on the Zepto mobile app or web portal. The tracking status transitions through three primary milestones:
+- 'Packing Order' at the micro-fulfillment center (typically 2-3 minutes).
+- 'Driver Assigned and Picked Up' (typically 1 minute).
+- 'Out for Delivery' with live rider map movement to the delivery address.
+
+2. ETA Accuracy and Notifications
+The estimated time of arrival (ETA) is dynamically calculated using local traffic models, weather factors, and route optimization algorithms. Push notifications and SMS alerts are triggered at dispatch and when the rider is within 200 meters.
+
+3. Tracking Discrepancies
+If the rider icon remains stationary for more than 5 minutes, customers can tap the 'Contact Delivery Partner' button or initiate an instant chat with support for status verification.

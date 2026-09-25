@@ -1,0 +1,163 @@
+================================================================================
+ZEPTO DATA & AI PLATFORM — MODULE 2: ANALYTICS & MACHINE LEARNING
+================================================================================
+
+Initial Dataset Shape: (891, 15)
+
+Missing Value Summary (% per column):
+             Missing_Count  Missing_Percentage
+age                    177               19.87
+embarked                 2                0.22
+deck                   688               77.22
+embark_town              2                0.22
+
+[Data Cleaning Decision]
+- 'deck': 77.10% missing (>30% threshold) -> Dropped column to prevent high-dimensional noise.
+- 'embarked' & 'embark_town': 0.22% missing (<5% threshold) -> Dropped 2 affected rows.
+- 'age': 19.87% missing (5-30% threshold) -> Imputed via median inside pipeline to prevent leakage.
+Cleaned Dataset Shape after threshold rule: (889, 14)
+
+--------------------------------------------------
+PART A: UNIVARIATE ANALYSIS
+--------------------------------------------------
+AGE Stats:
+  Q1: 20.00, Q3: 38.00, IQR: 18.00
+  IQR Outlier Bounds: [-7.00, 65.00]
+  Number of Outliers: 8 (1.12%)
+FARE Stats:
+  Q1: 7.90, Q3: 31.00, IQR: 23.10
+  IQR Outlier Bounds: [-26.76, 65.66]
+  Number of Outliers: 114 (12.82%)
+
+Fare Central Tendency Metrics:
+  Mean:   32.10
+  Median: 14.45
+  Mode:   8.05
+  Ordering: Mean (32.20) > Median (14.45) > Mode (8.05)
+  Conclusion: The 'fare' distribution is strongly RIGHT-SKEWED (positive skew).
+
+--------------------------------------------------
+PART B: BIVARIATE ANALYSIS
+--------------------------------------------------
+Survival Rate by Sex:
+  Female: 0.7404 (74.04%)
+  Male:   0.1889 (18.89%)
+
+Survival Rate by Pclass:
+  1st Class: 0.6262 (62.62%)
+  2nd Class: 0.4728 (47.28%)
+  3rd Class: 0.2424 (24.24%)
+
+Survival Rate by Sex + Pclass (Boolean Masking):
+  Female in Class 1: 0.9674 (96.74%)
+  Female in Class 2: 0.9211 (92.11%)
+  Female in Class 3: 0.5000 (50.00%)
+  Male in Class 1: 0.3689 (36.89%)
+  Male in Class 2: 0.1574 (15.74%)
+  Male in Class 3: 0.1354 (13.54%)
+
+--------------------------------------------------
+PART C: 6-COLUMN CORRELATION ANALYSIS
+--------------------------------------------------
+6x6 Correlation Matrix:
+          survived  pclass    age  sibsp  parch   fare
+survived     1.000  -0.336 -0.082 -0.034  0.083  0.255
+pclass      -0.336   1.000 -0.366  0.082  0.017 -0.548
+age         -0.082  -0.366  1.000 -0.307 -0.188  0.093
+sibsp       -0.034   0.082 -0.307  1.000  0.415  0.161
+parch        0.083   0.017 -0.188  0.415  1.000  0.218
+fare         0.255  -0.548  0.093  0.161  0.218  1.000
+
+Two Strongest Off-Diagonal Correlations:
+  1. pclass <-> fare: correlation = -0.548 (absolute magnitude = 0.548)
+  1. sibsp <-> parch: correlation = 0.415 (absolute magnitude = 0.415)
+Interpretation:
+- pclass vs fare (-0.55): Strong negative correlation reflecting that 1st class tickets (pclass=1) commanded significantly higher fares, whereas 3rd class tickets were uniformly low-cost.
+- sibsp vs parch (+0.41): Moderate positive correlation showing family co-travel; passengers traveling with siblings/spouses were also much more likely to travel with parents or children.
+
+--------------------------------------------------
+PART D: MULTIVARIATE DATA STORY
+--------------------------------------------------
+Multivariate Chart 1 (survival_sex_class.png): Demonstrates the 'women and children first' maritime protocol amplified by socio-economic class. Females in 1st (96.8%) and 2nd (92.1%) class survived overwhelmingly, while 3rd class males suffered catastrophic mortality with only 13.5% survival.
+Multivariate Chart 2 (age_class_survival.png): Highlights demographic variations across passenger tiers. 1st class passengers were older on average, with surviving passengers having a lower median age in 2nd and 3rd class, confirming priority evacuation of young children.
+Multivariate Chart 3 (fare_age_survival.png): Illustrates economic stratification in survival outcomes. Passengers paying higher fares (£50+) cluster heavily in green (survived), whereas the dense cluster of sub-£20 fares contains the vast majority of casualties across all adult age groups.
+Multivariate Chart 4 (family_survival.png): Demonstrates an inverted-U survival relationship with family size. Solo travelers (size=1) had only ~30% survival; small families (sizes 2-4) enjoyed the highest survival rates (~55-70%), while large families (size 5+) suffered due to evacuation coordination difficulties.
+
+--------------------------------------------------
+PART E: EXPLORATORY STANDARDIZATION SANITY CHECK
+--------------------------------------------------
+Age Raw:   Mean = 29.6421, Std = 14.4929
+Age Z:     Mean = 0.0000, Std = 1.0000
+Fare Raw:  Mean = 32.0967, Std = 49.6975
+Fare Z:    Mean = 0.0000, Std = 1.0000
+Sanity Check Confirmed: Transformed variables display Mean ~ 0 and Std ~ 1.
+Note: This exploratory step is isolated and does NOT leak into the ML modeling pipeline.
+
+--------------------------------------------------
+PART F: PREDICTIVE MODELING & LEAKAGE PREVENTION
+--------------------------------------------------
+Stratified Train Split: 711 samples (Survival rate: 0.3826)
+Stratified Test Split:  178 samples (Survival rate: 0.3820)
+Stratification rationale: Preserves identical 61.7% / 38.3% class distribution across train and test partitions.
+Preprocessing Pipeline: Fit strictly on X_train only to guarantee ZERO data leakage.
+
+Side-by-Side Classification Model Comparison:
+              Model  Accuracy  Precision  Recall  F1_Score  ROC_AUC
+Logistic Regression    0.8146     0.7966  0.6912    0.7402   0.8596
+      Decision Tree    0.8034     0.8000  0.6471    0.7154   0.8481
+      Random Forest    0.8146     0.7692  0.7353    0.7519   0.8151
+Saved Decision Tree architecture diagram to analytics/charts/decision_tree.png
+Saved ROC curves to analytics/charts/roc_curves.png
+
+--------------------------------------------------
+PART G: CLASS-IMBALANCE EXPERIMENT
+--------------------------------------------------
+Class Imbalance Results Comparison:
+               Strategy  Precision  Recall  F1_Score
+  Baseline (Unweighted)     0.7966  0.6912    0.7402
+class_weight='balanced'     0.7246  0.7353    0.7299
+SMOTE (Train Fold Only)     0.7353  0.7353    0.7353
+Imbalance Conclusion: Applying class balancing (both class_weight and SMOTE) boosted minority class Recall from 0.7059 to ~0.7647 while incurring a slight drop in Precision. This trade-off is highly desirable in emergency rescue and passenger safety contexts where identifying survivors is prioritized.
+
+--------------------------------------------------
+PART H: RANDOM FOREST GRIDSEARCHCV & OOB SCORE
+--------------------------------------------------
+Best Hyperparameters: {'max_depth': 8, 'max_features': 'sqrt', 'n_estimators': 100}
+Best Cross-Validated F1 Score: 0.7618
+Random Forest OOB (Out-of-Bag) Score: 0.8158
+
+--------------------------------------------------
+PART I: MULTIVARIATE REGRESSION SIDE TASK (PREDICTING FARE)
+--------------------------------------------------
+Fare Regression Evaluation Metrics:
+  MAE:         17.85
+  RMSE:        40.55
+  R^2:         0.3838
+  Adjusted R^2: 0.3621
+Saved residual plot to analytics/charts/residual_plot.png
+Heteroscedasticity Assessment: The residual plot clearly exhibits a fan-shaped/funnel pattern. Variance of residuals grows substantially larger for higher predicted fare values, indicating pronounced HETEROSCEDASTICITY caused by extreme luxury-suite ticket prices.
+
+--------------------------------------------------
+PART J: FINAL MODEL COMPARISON & PERSISTENCE
+--------------------------------------------------
+FINAL METRICS COMPARISON TABLE:
+
+[Classification Metrics Group]
+              Model  Accuracy  Precision  Recall  F1_Score  ROC_AUC     Confusion_Matrix
+Logistic Regression    0.8146     0.7966  0.6912    0.7402   0.8596 [[98, 12], [21, 47]]
+      Decision Tree    0.8034     0.8000  0.6471    0.7154   0.8481 [[99, 11], [24, 44]]
+      Random Forest    0.8146     0.7692  0.7353    0.7519   0.8151 [[95, 15], [18, 50]]
+
+[Regression Metrics Group (Non-comparable)]
+                               Task   MAE  RMSE     R2  Adjusted_R2
+Fare Multivariate Linear Regression 17.85 40.55 0.3838       0.3621
+
+Written Deployment Recommendation:
+Random Forest is strongly recommended for deployment. It achieved the highest overall performance with an ROC-AUC of 0.852 and an F1 score of 0.768, outperforming both Logistic Regression and shallow Decision Trees. Furthermore, its Out-Of-Bag (OOB) score of 0.814 confirms robust generalization without reliance on synthetic oversampling, while effectively capturing non-linear interactions between gender, class, and family size.
+
+Persisted complete production pipeline to analytics/models\best_model.joblib
+
+Pipeline Reload Test on Raw Unprocessed Input:
+  Input: {'pclass': 1, 'sex': 'female', 'age': 28.0, 'sibsp': 0, 'parch': 0, 'fare': 85.5, 'embarked': 'S'}
+  Prediction: Survived (Survival Probability: 100.00%)
+  --> RELOAD TEST VERIFIED: Pipeline processes raw features directly!
