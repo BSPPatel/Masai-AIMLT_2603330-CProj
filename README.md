@@ -34,8 +34,11 @@ zepto-data-ai-platform/
 ├── README.md                      # Master root project documentation
 │
 ├── assets/                        # Platform UI screenshots & architecture assets
+│   ├── fishbone_data_flow_architecture.png # Interactive Fishbone Architecture Diagram UI capture
+│   ├── catalog_sql_studio_preview.png   # E-Commerce Catalog & Live SQL Studio UI capture
+│   ├── ml_prediction_simulator_preview.png # Live Passenger Survival Simulator & Leaderboard
 │   ├── analytics_gallery_preview.png    # Visualizations Gallery UI capture (10 analytical charts)
-│   └── fishbone_data_flow_architecture.png # Interactive Fishbone Architecture Diagram UI capture
+│   └── chat_assistant_preview.png       # AI Policy Assistant & Grounded Chat UI capture
 │
 ├── data_pipeline/                 # MODULE 1: Data Engineering Pipeline
 │   ├── scraper.py                 # Scrapes books.toscrape.com (163 items, 5 categories)
@@ -213,6 +216,12 @@ Execute all modules, database migrations, SQL queries, machine learning models, 
 * **Relational SQLite Schema:** `categories` and `books` tables linked by Foreign Key (`PRAGMA foreign_keys = ON;`).
 * **SQL Queries & Pandas Equivalence:** Executed 6 queries covering `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, `DISTINCT`, `BETWEEN`, `IN`, and `JOIN`. Verified exact output equivalence between SQL `INNER JOIN` and Pandas `pd.merge` (`assert diff == 0`).
 
+#### E-Commerce Catalog & Interactive SQL Studio (Command Center Interface)
+
+![E-Commerce Catalog & Live SQL Studio](assets/catalog_sql_studio_preview.png)
+
+*Figure: Interactive Data Engineering Hub inside the Enterprise Command Center (`http://127.0.0.1:7860/`). Displays 163 normalized catalog items across 5 categories, fixed GBP to INR currency conversion (£1 = ₹105.50), dataset export tools (`raw_books.json`, `cleaned_books.csv`), and the live read-only SQLite Studio with execution metrics.*
+
 ### Module 2: Analytics & Machine Learning
 * **Threshold Cleaning:** Dropped `deck` column (>30% missing: 77.1%); dropped 2 rows in `embarked` (<5% missing: 0.22%); imputed `age` (19.9% missing) inside the pipeline.
 * **Fare Skewness:** $\text{Mean } (32.10) > \text{Median } (14.45) > \text{Mode } (8.05)$ indicates heavy positive (**right-skewed**) distribution.
@@ -230,6 +239,12 @@ Execute all modules, database migrations, SQL queries, machine learning models, 
 * **Hyperparameter Tuning:** Tuned Random Forest achieved an Out-Of-Bag (**OOB**) score of $0.8158$.
 * **Fare Regression:** Multivariate linear regression achieved $\text{MAE} = 17.85$, $\text{RMSE} = 40.55$, $R^2 = 0.3838$. Residual plot shows pronounced **heteroscedasticity** at higher fares.
 * **Joblib Pipeline:** Full pipeline serialized to `analytics/models/best_model.joblib` and re-tested on raw unprocessed inputs.
+
+#### Live Passenger Survival Simulator & Model Leaderboard (Command Center Interface)
+
+![Live Passenger Survival Simulator & Model Leaderboard](assets/ml_prediction_simulator_preview.png)
+
+*Figure: Real-time ML Prediction Sandbox inside the Enterprise Command Center. Users can interactively adjust passenger socioeconomic and demographic variables (Fare, Age, Class, Family) to observe real-time survival probability updates, alongside the side-by-side Model Leaderboard comparing Logistic Regression, Decision Tree, and Tuned Random Forest.*
 
 #### Analytical Visualizations Gallery (Command Center Interface)
 
@@ -293,6 +308,12 @@ The 10 analytical figures generated during the Module 2 Exploratory Data Analysi
      "confidence": 1.0
    }
    ```
+
+#### AI Support Assistant & Grounded Policy Chat (Command Center Interface)
+
+![AI Support Assistant & Grounded Policy Chat](assets/chat_assistant_preview.png)
+
+*Figure: Interactive Generative AI Policy Assistant powered by a 3-node LangGraph StateGraph workflow. Features conversational multi-turn chat, quick preset prompt chips, source chunk attribution tags (`doc_01.txt`, `doc_03.txt`), confidence indicators, and strict negative constraints preventing out-of-domain hallucinations.*
 
 ---
 

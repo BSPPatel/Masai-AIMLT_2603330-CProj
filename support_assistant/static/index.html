@@ -2804,6 +2804,19 @@ LIMIT 5;</textarea>
     window.addEventListener('DOMContentLoaded', () => {
       loadCatalogData();
       runPrediction();
+
+      // URL parameter or hash routing for tab navigation
+      const params = new URLSearchParams(window.location.search);
+      const targetTab = params.get('tab') || window.location.hash.replace('#', '');
+      if (targetTab && document.getElementById(targetTab)) {
+        switchTab(targetTab);
+      }
+
+      // Populate interactive demo conversation if requested
+      if (params.get('demo') === '1') {
+        appendChatMessage('user', 'What is the delivery fee for orders below Rs 149 and what benefits are in Zepto Pass?');
+        appendChatMessage('bot', 'Based on the retrieved context from official Zepto delivery & membership policies:\n• Standard delivery fee is Rs. 15 for orders below Rs. 149.\n• Orders of Rs. 149 or above qualify for free delivery for all standard customers.\n• Zepto Pass members receive unlimited free delivery on all eligible orders across all dark store zones.', ['doc_01.txt_chunk_2', 'doc_03.txt_chunk_1'], 1.0);
+      }
     });
   </script>
 </body>
