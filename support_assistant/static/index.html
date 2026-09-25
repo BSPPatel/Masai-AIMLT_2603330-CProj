@@ -1253,8 +1253,29 @@
       <!-- Live Catalog Table Explorer -->
       <div class="card catalog-section">
         <div class="card-title">
-          <span>📦 Scraped Inventory Catalog Explorer</span>
-          <span class="brand-badge" id="catalogCounter">Showing 20 items</span>
+          <span>📦 Scraped Inventory & Data Pipeline Explorer</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <a href="/api/catalog/export/json" target="_blank" class="brand-badge" style="text-decoration: none; cursor: pointer; color: #c4b5fd;">📥 raw_books.json</a>
+            <a href="/api/catalog/export/csv" target="_blank" class="brand-badge" style="text-decoration: none; cursor: pointer; color: #6ee7b7;">📥 cleaned_books.csv</a>
+            <span class="brand-badge" id="catalogCounter">Showing 163 items</span>
+          </div>
+        </div>
+
+        <!-- Mode Switcher -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+          <div style="display: flex; gap: 8px;">
+            <button id="btnViewNormalized" class="filter-chip active" onclick="setCatalogMode('normalized')">
+              <span>📊 Cleaned & Normalized Database</span>
+            </button>
+            <button id="btnViewRaw" class="filter-chip" onclick="setCatalogMode('raw')">
+              <span>📄 Original Raw Scraped Data (JSON)</span>
+            </button>
+          </div>
+          <div>
+            <button class="sql-preset-btn" onclick="openRawDatasetModal()">
+              <span>🔍 View Full Raw JSON in Modal</span>
+            </button>
+          </div>
         </div>
 
         <div class="catalog-controls">
@@ -1265,17 +1286,17 @@
 
           <div class="category-filter-chips" id="categoryChips">
             <button class="filter-chip active" onclick="filterByCategory('')">All Categories</button>
-            <button class="filter-chip" onclick="filterByCategory('Travel')">Travel</button>
-            <button class="filter-chip" onclick="filterByCategory('Mystery')">Mystery</button>
-            <button class="filter-chip" onclick="filterByCategory('Historical Fiction')">Historical Fiction</button>
-            <button class="filter-chip" onclick="filterByCategory('Sequential Art')">Sequential Art</button>
-            <button class="filter-chip" onclick="filterByCategory('Classics')">Classics</button>
+            <button class="filter-chip" onclick="filterByCategory('Travel')">Travel (11)</button>
+            <button class="filter-chip" onclick="filterByCategory('Mystery')">Mystery (32)</button>
+            <button class="filter-chip" onclick="filterByCategory('Historical Fiction')">Historical Fiction (26)</button>
+            <button class="filter-chip" onclick="filterByCategory('Sequential Art')">Sequential Art (75)</button>
+            <button class="filter-chip" onclick="filterByCategory('Classics')">Classics (19)</button>
           </div>
         </div>
 
         <div class="table-container">
           <table>
-            <thead>
+            <thead id="catalogTableHead">
               <tr>
                 <th style="width: 70px;">ID</th>
                 <th>Book Title</th>
@@ -1287,7 +1308,7 @@
               </tr>
             </thead>
             <tbody id="catalogTableBody">
-              <tr><td colspan="7" style="text-align: center; color: var(--text-dim);">Loading SQLite catalog data...</td></tr>
+              <tr><td colspan="7" style="text-align: center; color: var(--text-dim);">Loading catalog data...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1864,7 +1885,9 @@ LIMIT 5;</textarea>
     // Tab 2: Data Engineering Hub
     // -------------------------------------------------------------
     let allBooks = [];
+    let rawBooks = [];
     let currentCategoryFilter = '';
+    let currentCatalogMode = 'normalized'; // 'normalized' or 'raw'
 
     async function loadCatalogData() {
       try {
@@ -1877,63 +1900,159 @@ LIMIT 5;</textarea>
           document.getElementById('statCategories').textContent = stats.total_categories;
         }
 
-        // Load books
+        // Load normalized books
         const booksRes = await fetch('/api/catalog/books?limit=200');
         if (booksRes.ok) {
           const data = await booksRes.json();
           allBooks = data.books || [];
-          renderCatalogTable(allBooks);
         }
+
+        // Load raw scraped books
+        const rawRes = await fetch('/api/catalog/raw?limit=200');
+        if (rawRes.ok) {
+          const rawData = await rawRes.json();
+          rawBooks = rawData.books || [];
+        }
+
+        renderCurrentCatalogView();
       } catch (err) {
         console.error('Failed to load catalog data:', err);
       }
     }
 
-    function renderCatalogTable(books) {
+    function setCatalogMode(mode) {
+      currentCatalogMode = mode;
+      document.getElementById('btnViewNormalized').classList.toggle('active', mode === 'normalized');
+      document.getElementById('btnViewRaw').classList.toggle('active', mode === 'raw');
+      renderCurrentCatalogView();
+    }
+
+    function renderCurrentCatalogView() {
+      const thead = document.getElementById('catalogTableHead');
       const tbody = document.getElementById('catalogTableBody');
-      document.getElementById('catalogCounter').textContent = `Showing ${books.length} items`;
+      const q = document.getElementById('catalogSearch').value.toLowerCase().trim();
 
-      if (books.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-dim); padding: 24px;">No books found matching search criteria.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = books.map(b => {
-        const stars = '★'.repeat(b.rating) + '☆'.repeat(5 - b.rating);
-        return `
+      if (currentCatalogMode === 'normalized') {
+        thead.innerHTML = `
           <tr>
-            <td style="font-family: 'JetBrains Mono', monospace; color: var(--text-dim);">${b.book_id}</td>
-            <td style="font-weight: 600;">${b.title}</td>
-            <td><span style="background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; color: #c4b5fd;">${b.category_name}</span></td>
-            <td><span class="rating-stars">${stars}</span></td>
-            <td style="font-family: 'JetBrains Mono', monospace;">£${b.price_gbp.toFixed(2)}</td>
-            <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #6ee7b7;">₹${b.price_inr.toFixed(2)}</td>
-            <td><span class="badge-in-stock">In Stock</span></td>
+            <th style="width: 70px;">ID</th>
+            <th>Book Title</th>
+            <th style="width: 160px;">Category</th>
+            <th style="width: 110px;">Rating</th>
+            <th style="width: 110px;">Price (GBP)</th>
+            <th style="width: 120px;">Price (INR)</th>
+            <th style="width: 100px;">Status</th>
           </tr>
         `;
-      }).join('');
+
+        const filtered = allBooks.filter(b => {
+          const matchesCategory = !currentCategoryFilter || b.category_name.toLowerCase() === currentCategoryFilter.toLowerCase();
+          const matchesSearch = !q || b.title.toLowerCase().includes(q) || b.category_name.toLowerCase().includes(q);
+          return matchesCategory && matchesSearch;
+        });
+
+        document.getElementById('catalogCounter').textContent = `Showing ${filtered.length} of ${allBooks.length} normalized items`;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-dim); padding: 24px;">No books found matching search criteria.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(b => {
+          const stars = '★'.repeat(b.rating) + '☆'.repeat(5 - b.rating);
+          return `
+            <tr>
+              <td style="font-family: 'JetBrains Mono', monospace; color: var(--text-dim);">${b.book_id}</td>
+              <td style="font-weight: 600;">${b.title}</td>
+              <td><span style="background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; color: #c4b5fd;">${b.category_name}</span></td>
+              <td><span class="rating-stars">${stars}</span></td>
+              <td style="font-family: 'JetBrains Mono', monospace;">£${b.price_gbp.toFixed(2)}</td>
+              <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #6ee7b7;">₹${b.price_inr.toFixed(2)}</td>
+              <td><span class="badge-in-stock">In Stock</span></td>
+            </tr>
+          `;
+        }).join('');
+      } else {
+        // Raw Scraped Mode
+        thead.innerHTML = `
+          <tr>
+            <th style="width: 60px;">#</th>
+            <th>Raw Scraped Title</th>
+            <th style="width: 150px;">Category</th>
+            <th style="width: 130px;">Raw Price</th>
+            <th style="width: 130px;">Star Rating Word</th>
+            <th style="width: 130px;">Raw Stock String</th>
+            <th style="width: 100px;">JSON View</th>
+          </tr>
+        `;
+
+        const filtered = rawBooks.map((b, idx) => ({ ...b, originalIndex: idx + 1 })).filter(b => {
+          const matchesCategory = !currentCategoryFilter || (b.category || '').toLowerCase() === currentCategoryFilter.toLowerCase();
+          const matchesSearch = !q || (b.title || '').toLowerCase().includes(q) || (b.category || '').toLowerCase().includes(q);
+          return matchesCategory && matchesSearch;
+        });
+
+        document.getElementById('catalogCounter').textContent = `Showing ${filtered.length} of ${rawBooks.length} raw scraped items`;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-dim); padding: 24px;">No raw scraped books found matching search criteria.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(b => {
+          return `
+            <tr>
+              <td style="font-family: 'JetBrains Mono', monospace; color: var(--text-dim);">${b.originalIndex}</td>
+              <td style="font-weight: 600;">${b.title}</td>
+              <td><span style="background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.3); padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; color: #f472b6;">${b.category}</span></td>
+              <td style="font-family: 'JetBrains Mono', monospace; color: #fbbf24;">${b.price}</td>
+              <td style="font-family: 'JetBrains Mono', monospace; color: #c4b5fd;">"${b.star_rating}"</td>
+              <td><span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #34d399;">${b.availability}</span></td>
+              <td>
+                <button class="sql-preset-btn" style="padding: 2px 8px; font-size: 0.7rem;" onclick='openSingleJsonModal(${JSON.stringify(b).replace(/'/g, "&apos;")})'>
+                  { } JSON
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
     }
 
     function filterCatalogTable() {
-      const q = document.getElementById('catalogSearch').value.toLowerCase().trim();
-      const filtered = allBooks.filter(b => {
-        const matchesCategory = !currentCategoryFilter || b.category_name.toLowerCase() === currentCategoryFilter.toLowerCase();
-        const matchesSearch = !q || b.title.toLowerCase().includes(q) || b.category_name.toLowerCase().includes(q);
-        return matchesCategory && matchesSearch;
-      });
-      renderCatalogTable(filtered);
+      renderCurrentCatalogView();
     }
 
     function filterByCategory(cat) {
       currentCategoryFilter = cat;
-      document.querySelectorAll('.filter-chip').forEach(btn => {
-        if ((!cat && btn.textContent === 'All Categories') || btn.textContent === cat) {
+      document.querySelectorAll('#categoryChips .filter-chip').forEach(btn => {
+        if ((!cat && btn.textContent.startsWith('All Categories')) || btn.textContent.startsWith(cat)) {
           btn.classList.add('active');
         } else {
           btn.classList.remove('active');
         }
       });
-      filterCatalogTable();
+      renderCurrentCatalogView();
+    }
+
+    function openSingleJsonModal(bookObj) {
+      document.getElementById('modalTitle').textContent = `Raw Scraped Record: ${bookObj.title}`;
+      document.getElementById('modalBody').innerHTML = `
+        <div class="policy-content-view">${JSON.stringify(bookObj, null, 2)}</div>
+      `;
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function openRawDatasetModal() {
+      document.getElementById('modalTitle').textContent = `Complete Raw Scraped Dataset (raw_books.json — 163 items)`;
+      document.getElementById('modalBody').innerHTML = `
+        <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Source: books.toscrape.com across 5 categories</span>
+          <a href="/api/catalog/export/json" target="_blank" class="brand-badge" style="text-decoration:none; color:#c4b5fd;">📥 Download JSON File</a>
+        </div>
+        <div class="policy-content-view" style="max-height: 480px; overflow-y: auto;">${JSON.stringify(rawBooks, null, 2)}</div>
+      `;
+      document.getElementById('modalOverlay').classList.add('active');
     }
 
     // SQL Studio

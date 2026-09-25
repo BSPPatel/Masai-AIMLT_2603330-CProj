@@ -219,8 +219,42 @@ def get_catalog_stats():
         "categories": cats
     }
 
+RAW_JSON_PATH = os.path.join(PROJECT_ROOT, "data_pipeline", "data", "raw_books.json")
+CLEANED_CSV_PATH = os.path.join(PROJECT_ROOT, "data_pipeline", "data", "cleaned_books.csv")
+
+@app.get("/api/catalog/raw")
+def get_raw_scraped_books(limit: int = 200):
+    """Returns the original raw scraped books before cleaning and normalization."""
+    import json
+    if not os.path.exists(RAW_JSON_PATH):
+        raise HTTPException(status_code=404, detail="Raw scraped dataset not found.")
+    with open(RAW_JSON_PATH, "r", encoding="utf-8") as f:
+        raw_data = json.load(f)
+    return {
+        "source": "books.toscrape.com",
+        "total_scraped": len(raw_data),
+        "count": min(len(raw_data), limit),
+        "books": raw_data[:limit]
+    }
+
+@app.get("/api/catalog/export/{file_format}")
+def export_catalog(file_format: str):
+    """Downloads scraped catalog in json or csv format."""
+    from fastapi.responses import FileResponse
+    fmt = file_format.lower().strip()
+    if fmt == "json":
+        if not os.path.exists(RAW_JSON_PATH):
+            raise HTTPException(status_code=404, detail="JSON file not found.")
+        return FileResponse(RAW_JSON_PATH, media_type="application/json", filename="raw_books.json")
+    elif fmt == "csv":
+        if not os.path.exists(CLEANED_CSV_PATH):
+            raise HTTPException(status_code=404, detail="CSV file not found.")
+        return FileResponse(CLEANED_CSV_PATH, media_type="text/csv", filename="cleaned_books.csv")
+    else:
+        raise HTTPException(status_code=400, detail="Supported export formats: 'json', 'csv'")
+
 @app.get("/api/catalog/books")
-def get_catalog_books(limit: int = 20, category: Optional[str] = None):
+def get_catalog_books(limit: int = 200, category: Optional[str] = None):
     """Fetches books from SQLite database with optional category filtering."""
     if not os.path.exists(DB_PATH):
         raise HTTPException(status_code=404, detail="Database not found.")

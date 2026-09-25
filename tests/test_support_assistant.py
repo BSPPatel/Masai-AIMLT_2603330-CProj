@@ -162,6 +162,20 @@ def test_unified_platform_endpoints():
     bad_sql = client.post("/api/catalog/sql", json={"query": "DROP TABLE books;"})
     assert bad_sql.status_code == 400
     
+    # Raw Scraped Data & Exports
+    raw_res = client.get("/api/catalog/raw?limit=10")
+    assert raw_res.status_code == 200
+    assert raw_res.json()["total_scraped"] == 163
+    assert len(raw_res.json()["books"]) == 10
+    
+    exp_json = client.get("/api/catalog/export/json")
+    assert exp_json.status_code == 200
+    assert exp_json.headers["content-type"] == "application/json"
+    
+    exp_csv = client.get("/api/catalog/export/csv")
+    assert exp_csv.status_code == 200
+    assert "text/csv" in exp_csv.headers["content-type"]
+    
     # 4. Analytics & Live ML Prediction
     charts_res = client.get("/api/analytics/charts")
     assert charts_res.status_code == 200
