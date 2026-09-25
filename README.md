@@ -33,6 +33,9 @@ zepto-data-ai-platform/
 ├── run_all.py                     # Master one-click end-to-end runner script
 ├── README.md                      # Master root project documentation
 │
+├── assets/                        # Platform UI screenshots & architecture assets
+│   └── analytics_gallery_preview.png # Visualizations Gallery UI capture (10 analytical charts)
+│
 ├── data_pipeline/                 # MODULE 1: Data Engineering Pipeline
 │   ├── scraper.py                 # Scrapes books.toscrape.com (163 items, 5 categories)
 │   ├── cleaner.py                 # 105.50 INR/GBP fixed conversion, median imputation
@@ -72,6 +75,93 @@ zepto-data-ai-platform/
     ├── test_analytics.py          # 7 unit and integration tests for Module 2
     └── test_support_assistant.py  # 8 unit and integration tests for Module 3
 ```
+
+---
+
+### 2.1 End-to-End Enterprise Data Flow — Fishbone (Ishikawa) Architecture
+
+To make the system architecture and data lifecycle intuitive to understand, the data flow is mapped using the **Fishbone (Ishikawa) Diagram Technique**. 
+
+Six major architectural "ribs" feed into the central integration spine, converging directly at the **Head of the Fish**: the **Unified Zepto Enterprise Intelligence Platform**.
+
+```text
+                                       FISHBONE (ISHIKAWA) DATA FLOW ARCHITECTURE
+                                       ═══════════════════════════════════════════
+
+      [1. DATA INGESTION]                 [3. STATISTICAL EDA]                 [5. POLICY CORPUS]
+     (Web Scraper - Mod 1)               (Analytics - Mod 2)                 (Knowledge Base - Mod 3)
+              \                                   \                                    \
+   books.toscrape.com                      Missing Threshold                   8 Operational Policies
+     5 Target Categories                     (deck >30% drop)                    (32 Chunks)
+     BeautifulSoup4 Scraping                 Fare Skewness Analysis              TF-IDF Feature Space
+     raw_books.json Landing                  6-Col Correlation                   Top-3 Cosine Similarity
+              \                                   \                                    \
+               \                                   \                                    \
+   ═════════════╤═══════════════════════════════════╤════════════════════════════════════╤═══════════════> [HEAD: ZEPTO ENTERPRISE
+                │                                   │                                    │                 DATA & AI PLATFORM]
+               /                                   /                                    /                  (Unified Web UI :7860,
+              /                                   /                                    /                    Live ML Predictions,
+     1 GBP = 105.50 INR (Fixed)            Stratified 80/20 Split              classify_intent O(1)        Interactive SQL Studio,
+     Type Casting (1-5 Stars)              Zero Data Leakage Rule              3-Node LangGraph StateGraph  Grounded Policy Chat)
+     SQLite 3NF Schema                     SMOTE Train Resampling              Pydantic V2 Response Schema
+     SQL JOIN == Pandas (0 Diff)           Random Forest (OOB: 0.816)          FastAPI Async Engine
+              /                                   /                                    /
+              /                                   /                                    /
+     [2. TRANSFORMATION]                   [4. PREDICTIVE ML]                   [6. ORCHESTRATION]
+   (Normalization - Mod 1)               (Pipelines - Mod 2)                  (Service Layer - Mod 3)
+```
+
+#### Mermaid Fishbone Flowchart
+
+```mermaid
+flowchart LR
+    subgraph INGESTION["1. Data Ingestion (Upper Bone)"]
+        A1["books.toscrape.com"] --> A2["HTML Parsing (BS4)"] --> A3["raw_books.json"]
+    end
+
+    subgraph TRANSFORMATION["2. Transformation (Lower Bone)"]
+        B1["Fixed FX: 1 GBP = ₹105.50"] --> B2["Type Casting (Rating & Stock)"] --> B3["SQLite 3NF (zepto_catalog.db)"]
+    end
+
+    subgraph EDA["3. Statistical EDA (Upper Bone)"]
+        C1["Missingness (>30% drop)"] --> C2["Fare Skewness Diagnostics"] --> C3["10 Analytical Figures"]
+    end
+
+    subgraph ML["4. Predictive ML (Lower Bone)"]
+        D1["Stratified Split (80/20)"] --> D2["SMOTE (Train Only)"] --> D3["best_model.joblib (OOB 0.816)"]
+    end
+
+    subgraph CORPUS["5. Policy Corpus (Upper Bone)"]
+        E1["8 Policy Docs (32 Chunks)"] --> E2["TF-IDF Embeddings"] --> E3["Top-3 Cosine Retrieval"]
+    end
+
+    subgraph SERVING["6. Serving & Graph (Lower Bone)"]
+        F1["classify_intent Router"] --> F2["LangGraph StateGraph"] --> F3["FastAPI REST Endpoints"]
+    end
+
+    %% Central Spine Convergence
+    A3 --> SPINE1["SPINE: Ingestion Backbone"]
+    B3 --> SPINE1
+    SPINE1 --> SPINE2["SPINE: Analytics Backbone"]
+    C3 --> SPINE2
+    D3 --> SPINE2
+    SPINE2 --> SPINE3["SPINE: Generative Serving Backbone"]
+    E3 --> SPINE3
+    F3 --> SPINE3
+
+    %% Fish Head (Outcome)
+    SPINE3 --> HEAD["★ HEAD: UNIFIED ZEPTO ENTERPRISE COMMAND CENTER ★\n(Interactive Web UI / Swagger Docs / Sub-15ms Latency)"]
+```
+
+#### Detailed Breakdown of the 6 Fishbone Ribs:
+
+1. **Upper Rib 1 — Data Ingestion (Module 1):** Scrapes 163 books across 5 target categories from `books.toscrape.com`, parsing raw HTML structure and landing raw JSON data into `data_pipeline/data/raw_books.json`.
+2. **Lower Rib 1 — Transformation & Normalization (Module 1):** Enforces currency conversion ($1\text{ GBP} = 105.50\text{ INR}$), cleans ratings into integers ($1 \dots 5$), casts boolean availability, and normalizes into a 3NF relational schema in `zepto_catalog.db` with verified `SQL JOIN == pd.merge` zero discrepancy.
+3. **Upper Rib 2 — Statistical EDA & Diagnostics (Module 2):** Applies strict missing-value thresholding (dropping `deck` at 77.1%, dropping `embarked` at 0.22%, median-imputing `age` at 19.9%), analyses fare right-skewness, computes the 6-column correlation matrix, and generates 10 publication-quality charts in `analytics/charts/`.
+4. **Lower Rib 2 — Predictive Machine Learning (Module 2):** Guarantees zero data leakage by fitting imputers and scalers strictly on the training fold, benchmarks Logistic Regression vs. Decision Tree vs. Tuned Random Forest ($OOB = 0.8158$), mitigates class imbalance via SMOTE on train fold only, and serializes the end-to-end pipeline to `best_model.joblib`.
+5. **Upper Rib 3 — Knowledge Grounding & Retrieval (Module 3):** Indexes 8 operational policy documents into 32 semantically self-contained chunks, maps them to a local TF-IDF vector space, and provides deterministic top-3 cosine similarity retrieval with negative prompt constraints to eliminate hallucinations.
+6. **Lower Rib 3 — Graph Orchestration & Serving (Module 3):** Routes queries through a 3-node LangGraph `StateGraph` (`classify_intent` $\rightarrow$ `retrieve_and_answer` / `direct_answer`), validates inputs/outputs against Pydantic V2 models, and exposes unified REST APIs via FastAPI.
+7. **The Fish Head (Outcome):** The **Unified Zepto Enterprise Command Center** (Web UI at `:7860`), offering real-time AI policy chat, an interactive SQLite catalog and SQL runner, live passenger survival prediction simulator, and high-resolution chart lightbox inspection.
 
 ---
 
@@ -133,6 +223,46 @@ Execute all modules, database migrations, SQL queries, machine learning models, 
 * **Hyperparameter Tuning:** Tuned Random Forest achieved an Out-Of-Bag (**OOB**) score of $0.8158$.
 * **Fare Regression:** Multivariate linear regression achieved $\text{MAE} = 17.85$, $\text{RMSE} = 40.55$, $R^2 = 0.3838$. Residual plot shows pronounced **heteroscedasticity** at higher fares.
 * **Joblib Pipeline:** Full pipeline serialized to `analytics/models/best_model.joblib` and re-tested on raw unprocessed inputs.
+
+#### Analytical Visualizations Gallery (Command Center Interface)
+
+The 10 analytical figures generated during the Module 2 Exploratory Data Analysis and modeling pipeline are integrated directly into Tab 3 of the Zepto Enterprise Command Center Web UI:
+
+![Analytical Visualizations Gallery](assets/analytics_gallery_preview.png)
+
+*Figure: Interactive Analytical Visualizations Gallery inside the Enterprise Command Center (`http://127.0.0.1:7860/`). Users can click any thumbnail to inspect high-resolution vectors in a full-screen lightbox modal.*
+
+##### Comprehensive Breakdown of the 10 Displayed Visualizations:
+1. **ROC Curves Comparison (`roc_curves.png`):**
+   * Multi-model Receiver Operating Characteristic curves contrasting Logistic Regression, Decision Tree, and Tuned Random Forest.
+   * **Finding:** Random Forest dominates the classifier hierarchy with the highest Area Under the Curve (**ROC-AUC = 0.871**), providing exceptional sensitivity and low false-positive rates.
+2. **Decision Tree Topology (`decision_tree.png`):**
+   * Pruned tree topology displaying decision nodes, Gini impurity indices, sample splits, and class distributions.
+   * **Finding:** Biological sex (`Sex_male <= 0.5`) forms the root split of the tree, confirming gender as the single most critical determinant of survival in the maritime disaster.
+3. **Correlation Heatmap (`correlation_matrix.png`):**
+   * Pairwise Pearson correlation heatmap across numeric attributes (`survived`, `pclass`, `age`, `sibsp`, `parch`, `fare`).
+   * **Finding:** Identifies strongest inverse correlation between passenger class and fare ($r = -0.548$), and notable family co-travel clustering between siblings/spouses and parents/children ($r = +0.415$).
+4. **Survival by Sex & Class (`multivariate_1_survival_sex_class.png`):**
+   * Grouped bar chart comparing survival probabilities segmented across gender and socio-economic ticket tiers.
+   * **Finding:** Dramatic interaction: 1st and 2nd class females achieved $>90\%$ survival rates, whereas 3rd class males suffered an $86.5\%$ mortality rate.
+5. **Fare vs. Age Scatter (`multivariate_3_fare_age_survival.png`):**
+   * Scatter plot mapping ticket fare vs. passenger age colored by binary survival outcome.
+   * **Finding:** Premium fares ($>£50$) consistently conferred higher survival probabilities across all age cohorts, highlighting the protective buffer of upper-deck accommodations.
+6. **Family Size Dynamics (`multivariate_4_family_survival.png`):**
+   * Bar distribution detailing survival rates as a function of total family unit size aboard.
+   * **Finding:** Small family units (2–4 members) achieved optimal survival ($55\%\text{--}72\%$), while solo travelers ($30.4\%$) and large families ($\ge 5$, $<18\%$) faced heavy survival penalties.
+7. **Fare Regression Residuals (`residual_plot.png`):**
+   * Residual plot (predicted values vs. prediction error) for the Ordinary Least Squares (OLS) ticket fare regression model.
+   * **Finding:** Exhibits a classic expanding **fan/funnel pattern**, confirming severe **heteroscedasticity** and violating the Gauss-Markov constant error variance assumption ($\sigma^2$) due to extreme 1st-class ticket outliers.
+8. **Univariate Fare Distribution (`univariate_fare.png`):**
+   * Dual-panel visualization featuring a Kernel Density Estimation (KDE) histogram and Tukey box plot.
+   * **Finding:** Quantifies severe positive right-skewness ($\text{Mean } 32.20 > \text{Median } 14.45 > \text{Mode } 8.05$) and detects multiple extreme outliers exceeding $£200$ and $£500$.
+9. **Univariate Age Distribution (`univariate_age.png`):**
+   * Histogram and KDE density curve of passenger ages.
+   * **Finding:** Displays a unimodal, slightly right-skewed distribution centered around 28–30 years, justifying median imputation ($28.0\text{ years}$) to treat the $19.9\%$ missingness without injecting mean distortion.
+10. **Age x Class Interaction (`multivariate_2_age_class_survival.png`):**
+    * Split violin plots detailing passenger age densities conditioned on passenger class and final outcome.
+    * **Finding:** Captures clear demographic age stratification: 1st Class was predominantly populated by older individuals (median $\sim 38$), while 3rd Class comprised younger laborers and families (median $\sim 24$).
 
 ### Module 3: Generative AI Support Assistant
 * **Corpus:** 8 Zepto policy files (`doc_01.txt` to `doc_08.txt`) covering Delivery, Returns, Membership, Tracking, Cancellations, Damaged Items, Gift Cards, and Support Hours.
