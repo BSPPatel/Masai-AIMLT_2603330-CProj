@@ -13,6 +13,7 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 if CURRENT_DIR not in sys.path:
     sys.path.insert(0, CURRENT_DIR)
 
+from fastapi.responses import HTMLResponse
 from models import AskRequest, AskResponse
 from graph import ask_question, is_mock_mode
 
@@ -30,13 +31,25 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.get("/")
+STATIC_INDEX_PATH = os.path.join(CURRENT_DIR, "static", "index.html")
+
+@app.get("/", response_class=HTMLResponse)
 def read_root():
+    """Serves the rich interactive Zepto AI Support Web Interface."""
+    if os.path.exists(STATIC_INDEX_PATH):
+        with open(STATIC_INDEX_PATH, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(content="<h2>Zepto Support Assistant API</h2><p><a href='/docs'>Swagger Docs</a></p>")
+
+@app.get("/api/info")
+def get_api_info():
+    """Returns service metadata and endpoint map."""
     return {
         "service": "Zepto Support Assistant API",
         "status": "online",
         "mock_mode": is_mock_mode(),
         "endpoints": {
+            "web_ui": "GET /",
             "ask": "POST /ask",
             "docs": "GET /docs"
         }

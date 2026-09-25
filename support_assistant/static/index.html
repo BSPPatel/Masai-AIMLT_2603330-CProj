@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zepto AI Policy Support Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #0c0914;
+      --bg-surface: rgba(22, 17, 38, 0.85);
+      --bg-surface-elevated: rgba(33, 26, 56, 0.7);
+      --border-subtle: rgba(139, 92, 246, 0.18);
+      --border-glow: rgba(236, 72, 153, 0.35);
+      --brand-primary: #8b5cf6;
+      --brand-secondary: #ec4899;
+      --brand-gradient: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f43f5e 100%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --shadow-glow: 0 0 35px rgba(168, 85, 247, 0.18);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(139, 92, 246, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(236, 72, 153, 0.1) 0%, transparent 40%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 16px 28px;
+      background: var(--bg-surface);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--brand-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 22px;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(236, 72, 153, 0.35);
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-text h1 span {
+      background: var(--brand-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      color: #34d399;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    .swagger-btn {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .swagger-btn:hover {
+      background: rgba(139, 92, 246, 0.25);
+      border-color: var(--brand-primary);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      max-width: 1380px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px;
+      gap: 24px;
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-glow);
+      height: calc(100vh - 120px);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 82%;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .bot .avatar {
+      background: var(--brand-gradient);
+      color: #fff;
+    }
+
+    .user .avatar {
+      background: rgba(148, 163, 184, 0.2);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .bubble {
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .bot .bubble {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      border-top-left-radius: 4px;
+    }
+
+    .user .bubble {
+      background: linear-gradient(135deg, #7c3aed, #9333ea);
+      color: #ffffff;
+      border-top-right-radius: 4px;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25);
+    }
+
+    .meta-badges {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+    }
+
+    .source-tag {
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      color: #c4b5fd;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .confidence-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .suggested-prompts {
+      padding: 12px 24px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(12, 9, 20, 0.5);
+    }
+
+    .prompt-chip {
+      white-space: nowrap;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .prompt-chip:hover {
+      background: rgba(139, 92, 246, 0.25);
+      border-color: var(--brand-primary);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .chat-input-area {
+      padding: 16px 24px;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 14px 18px;
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .chat-input-area input:focus {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+
+    .send-btn {
+      background: var(--brand-gradient);
+      border: none;
+      color: #ffffff;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(236, 72, 153, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .send-btn:hover {
+      opacity: 0.92;
+      transform: scale(1.02);
+    }
+
+    .sidebar {
+      width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .doc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .doc-item {
+      padding: 10px 12px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .doc-item:hover {
+      border-color: var(--brand-primary);
+      background: rgba(139, 92, 246, 0.15);
+    }
+
+    .doc-tag {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .architecture-box {
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .arch-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .step-pill {
+      background: rgba(139, 92, 246, 0.2);
+      color: #c4b5fd;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+    }
+
+    @media (max-width: 960px) {
+      main { flex-direction: column; padding: 12px; }
+      .sidebar { width: 100%; }
+      .chat-container { height: 600px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo-badge">Z</div>
+      <div class="brand-text">
+        <h1>Zepto <span>AI Support</span></h1>
+        <p>Grounded Policy Intelligence Platform</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        LangGraph RAG Online
+      </div>
+      <a href="/docs" target="_blank" class="swagger-btn">Swagger API Docs ↗</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="chat-container">
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+          <div class="avatar">Z</div>
+          <div class="bubble">
+            Hello! I am your <strong>Zepto Policy AI Assistant</strong>. I am grounded in Zepto's official policies across delivery, refunds, returns, memberships, cancellations, and customer support. How can I help you today?
+          </div>
+        </div>
+      </div>
+
+      <div class="suggested-prompts">
+        <button class="prompt-chip" onclick="askPreset('What is the delivery fee for orders below Rs 149?')">🚚 Delivery Fee</button>
+        <button class="prompt-chip" onclick="askPreset('What is the return window for groceries?')">📦 Returns Window</button>
+        <button class="prompt-chip" onclick="askPreset('What benefits are included in Zepto Pass?')">⭐ Zepto Pass</button>
+        <button class="prompt-chip" onclick="askPreset('What happens if I cancel after 60 seconds?')">⏱️ Cancellation Rules</button>
+        <button class="prompt-chip" onclick="askPreset('What is the capital of Japan?')">🌍 Off-Topic Test</button>
+      </div>
+
+      <form class="chat-input-area" id="chatForm" onsubmit="handleSubmit(event)">
+        <input 
+          type="text" 
+          id="queryInput" 
+          placeholder="Ask any question about Zepto policies..." 
+          autocomplete="off"
+        />
+        <button type="submit" class="send-btn" id="sendBtn">
+          <span>Send</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </form>
+    </div>
+
+    <aside class="sidebar">
+      <div class="card">
+        <h3>📚 Indexed Policy Corpus</h3>
+        <ul class="doc-list" id="docList">
+          <li class="doc_item" onclick="askPreset('Tell me about the delivery policy')">
+            <span>1. Delivery Policy</span>
+            <span class="doc-tag">doc_01.txt</span>
+          </li>
+          <li class="doc-item" onclick="askPreset('What is the return and refund policy?')">
+            <span>2. Returns & Refunds</span>
+            <span class="doc-tag">doc_02.txt</span>
+          </li>
+          <li class="doc-item" onclick="askPreset('What are the membership tiers?')">
+            <span>3. Membership Tiers</span>
+            <span class="doc-tag">doc_03.txt</span>
+          </li>
+          <li class="doc-item" onclick="askPreset('How does order tracking work?')">
+            <span>4. Order Tracking</span>
+            <span class="doc-tag">doc_04.txt</span>
+          </li>
+          <li class="doc-item" onclick="askPreset('What is the order cancellation policy?')">
+            <span>5. Order Cancellation</span>
+            <span class="doc-tag">doc_05.txt</span>
+          </li>
+          <li class="doc-item" onclick="askPreset('What if I receive damaged or missing items?')">
+            <span>6. Damaged or Missing</span>
+            <span class="doc-tag">doc_06.txt</span>
+          </li>
+          <li class="doc-item" onclick="askPreset('How do Zepto gift cards work?')">
+            <span>7. Gift Cards</span>
+            <span class="doc-tag">doc_07.txt</span>
+          </li>
+          <li class="doc-item" onclick="askPreset('What are customer support hours?')">
+            <span>8. Customer Support Hours</span>
+            <span class="doc-tag">doc_08.txt</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>⚡ LangGraph Architecture</h3>
+        <div class="architecture-box">
+          <div class="arch-step">
+            <span class="step-pill">1. Input</span>
+            <span>POST /ask payload received</span>
+          </div>
+          <div class="arch-step">
+            <span class="step-pill">2. Intent</span>
+            <span>classify_intent keyword routing</span>
+          </div>
+          <div class="arch-step">
+            <span class="step-pill">3. Vector</span>
+            <span>Top-3 Cosine similarity retrieval</span>
+          </div>
+          <div class="arch-step">
+            <span class="step-pill">4. Answer</span>
+            <span>retrieve_and_answer / direct_answer</span>
+          </div>
+          <div class="arch-step">
+            <span class="step-pill">5. Schema</span>
+            <span>Pydantic response validation</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const chatMessages = document.getElementById('chatMessages');
+    const queryInput = document.getElementById('queryInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    function appendMessage(sender, text, sources = [], confidence = null) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${sender}`;
+
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.textContent = sender === 'bot' ? 'Z' : 'You';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.innerHTML = text.replace(/\n/g, '<br>');
+
+      if (sources && sources.length > 0) {
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'meta-badges';
+        metaDiv.innerHTML = `<strong>Sources:</strong> ` + sources.map(s => `<span class="source-tag">${s}</span>`).join(' ');
+        if (confidence !== null) {
+          metaDiv.innerHTML += `<span class="confidence-tag">✓ Confidence ${(confidence * 100).toFixed(0)}%</span>`;
+        }
+        bubble.appendChild(metaDiv);
+      } else if (sender === 'bot' && confidence !== null) {
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'meta-badges';
+        metaDiv.innerHTML = `<span class="confidence-tag">✓ Direct Fallback</span>`;
+        bubble.appendChild(metaDiv);
+      }
+
+      msgDiv.appendChild(avatar);
+      msgDiv.appendChild(bubble);
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function sendQuery(queryText) {
+      if (!queryText.trim()) return;
+
+      appendMessage('user', queryText);
+      queryInput.value = '';
+      sendBtn.disabled = true;
+
+      try {
+        const res = await fetch('/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: queryText })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          appendMessage('bot', `⚠️ Error: ${err.detail || 'Service request failed'}`);
+          return;
+        }
+
+        const data = await res.json();
+        appendMessage('bot', data.answer, data.sources, data.confidence);
+      } catch (err) {
+        appendMessage('bot', '⚠️ Connection error reaching /ask endpoint.');
+      } finally {
+        sendBtn.disabled = false;
+        queryInput.focus();
+      }
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      sendQuery(queryInput.value);
+    }
+
+    function askPreset(promptText) {
+      queryInput.value = promptText;
+      sendQuery(promptText);
+    }
+  </script>
+</body>
+</html>
