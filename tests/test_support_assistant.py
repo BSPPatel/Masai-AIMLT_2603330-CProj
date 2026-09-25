@@ -119,3 +119,65 @@ def test_fastapi_endpoints():
     # Empty query should return 400 or 422
     err_res = client.post("/ask", json={"query": "   "})
     assert err_res.status_code in [400, 422]
+
+
+def test_unified_platform_endpoints():
+    """Validates the unified API endpoints serving all 3 modules."""
+    client = TestClient(app)
+    
+    # 1. System Summary
+    sum_res = client.get("/api/system/summary")
+    assert sum_res.status_code == 200
+    sum_data = sum_res.json()
+    assert sum_data["status"] == "operational"
+    assert "module_1" in sum_data["modules"]
+    assert "module_2" in sum_data["modules"]
+    assert "module_3" in sum_data["modules"]
+    
+    # 2. Policy Corpus Endpoints
+    pol_res = client.get("/api/policies")
+    assert pol_res.status_code == 200
+    policies = pol_res.json()["policies"]
+    assert len(policies) == 8
+    
+    doc1_res = client.get("/api/policies/doc_01.txt")
+    assert doc1_res.status_code == 200
+    assert "Zepto Delivery Policy" in doc1_res.json()["title"]
+    
+    # 3. Data Engineering Catalog & SQL Explorer
+    stats_res = client.get("/api/catalog/stats")
+    assert stats_res.status_code == 200
+    assert stats_res.json()["total_books"] == 163
+    assert stats_res.json()["total_categories"] == 5
+    
+    books_res = client.get("/api/catalog/books?limit=5")
+    assert books_res.status_code == 200
+    assert len(books_res.json()["books"]) == 5
+    
+    sql_res = client.post("/api/catalog/sql", json={"query": "SELECT COUNT(*) AS total FROM books;"})
+    assert sql_res.status_code == 200
+    assert sql_res.json()["data"][0]["total"] == 163
+    
+    # Block destructive SQL injection
+    bad_sql = client.post("/api/catalog/sql", json={"query": "DROP TABLE books;"})
+    assert bad_sql.status_code == 400
+    
+    # 4. Analytics & Live ML Prediction
+    charts_res = client.get("/api/analytics/charts")
+    assert charts_res.status_code == 200
+    assert len(charts_res.json()["charts"]) == 10
+    
+    pred_res = client.post("/api/analytics/predict", json={
+        "pclass": 1,
+        "sex": "female",
+        "age": 28.0,
+        "sibsp": 0,
+        "parch": 0,
+        "fare": 85.5,
+        "embarked": "S"
+    })
+    assert pred_res.status_code == 200
+    pred_data = pred_res.json()
+    assert pred_data["prediction"] in ["Survived", "Perished"]
+    assert 0.0 <= pred_data["survival_probability"] <= 1.0
+

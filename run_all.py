@@ -46,7 +46,7 @@ def main():
     if not os.path.exists(pytest_exe):
         pytest_exe = "pytest"
     run_step(
-        "Full Automated Test Suite (All 23 Tests)", 
+        "Full Automated Test Suite (All 24 Unit & Integration Tests)", 
         [pytest_exe, "tests/", "-v"]
     )
 
@@ -64,7 +64,7 @@ def main():
     print(f"Response:          {ask_question(gen_q)}")
 
     print("\n" + "#" * 80)
-    print("ALL PLATFORM MODULES & TESTS VERIFIED SUCCESSFULLY!")
+    print("ALL PLATFORM MODULES & 24 TESTS VERIFIED SUCCESSFULLY!")
     print("#" * 80 + "\n")
 
 if __name__ == "__main__":

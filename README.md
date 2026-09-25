@@ -6,14 +6,19 @@ $$\textbf{GET DATA} \longrightarrow \textbf{UNDERSTAND DATA} \longrightarrow \te
 
 ---
 
-## 1. Quick Access Links & Web Interface
+## 1. Quick Access Links & Unified Enterprise Web Interface
 
-| Interface | URL | Description |
+The platform provides a unified web application serving all 3 capstone modules with a reactive UI:
+
+| Interface / Endpoint | URL | Description |
 | :--- | :--- | :--- |
-| **Interactive Web UI** | [**http://127.0.0.1:7860/**](http://127.0.0.1:7860/) | Rich Zepto-themed chat UI with prompt chips, source badges, and doc explorer |
+| **Unified Command Center** | [**http://127.0.0.1:7860/**](http://127.0.0.1:7860/) | **Tab 1:** 🤖 AI Policy Assistant (LangGraph RAG)<br>**Tab 2:** 🛒 Data Engineering Hub (Catalog & SQL Studio)<br>**Tab 3:** 📊 Analytics & ML Sandbox (Simulator & Gallery)<br>**Tab 4:** ⚡ System Architecture & Telemetry |
 | **Swagger API Docs** | [**http://127.0.0.1:7860/docs**](http://127.0.0.1:7860/docs) | Interactive OpenAPI documentation for direct endpoint testing |
-| **Health Check** | [**http://127.0.0.1:7860/health**](http://127.0.0.1:7860/health) | Live service status endpoint |
-| **Primary API Endpoint** | `POST http://127.0.0.1:7860/ask` | Pydantic JSON request/response policy assistant |
+| **System Summary Telemetry** | [**http://127.0.0.1:7860/api/system/summary**](http://127.0.0.1:7860/api/system/summary) | Live JSON status across DB, ML pipeline, and Vector Store |
+| **Data Catalog & SQL API** | `GET /api/catalog/stats`<br>`POST /api/catalog/sql` | Query SQLite catalog and execute safe read-only SQL queries |
+| **Real-Time ML Inference** | `POST /api/analytics/predict` | Live inference via persisted Scikit-Learn Random Forest pipeline |
+| **Policy Documents API** | `GET /api/policies`<br>`GET /api/policies/{id}` | Read indexed policy texts directly in the browser |
+| **Policy AI Assistant (RAG)** | `POST /ask` | LangGraph 3-node policy-grounded Q&A |
 
 ---
 
@@ -154,7 +159,7 @@ Execute all modules, database migrations, SQL queries, machine learning models, 
 
 ---
 
-## 6. Automated Pytest Suite (23/23 Passing)
+## 6. Automated Pytest Suite (24/24 Passing)
 
 Run the full automated test suite:
 ```bash
@@ -164,33 +169,34 @@ Run the full automated test suite:
 ```text
 ============================= test session starts =============================
 platform win32 -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0
-collected 23 items
+collected 24 items
 
 tests/test_analytics.py::test_titanic_dataset_presence_and_shape PASSED  [  4%]
 tests/test_analytics.py::test_missing_value_threshold_logic PASSED       [  8%]
-tests/test_analytics.py::test_fare_central_tendency_and_skewness PASSED  [ 13%]
-tests/test_analytics.py::test_six_column_correlation_matrix_constraint PASSED [ 17%]
-tests/test_analytics.py::test_bivariate_boolean_masking PASSED           [ 21%]
-tests/test_analytics.py::test_model_persistence_and_raw_inference PASSED [ 26%]
-tests/test_analytics.py::test_all_charts_generated PASSED                [ 30%]
-tests/test_data_pipeline.py::test_fixed_currency_exchange_rate PASSED    [ 34%]
-tests/test_data_pipeline.py::test_clean_price_gbp PASSED                 [ 39%]
-tests/test_data_pipeline.py::test_clean_rating PASSED                    [ 43%]
-tests/test_data_pipeline.py::test_clean_availability PASSED              [ 47%]
-tests/test_data_pipeline.py::test_clean_and_transform_pipeline PASSED    [ 52%]
-tests/test_data_pipeline.py::test_sqlite_schema_and_integrity PASSED     [ 56%]
-tests/test_data_pipeline.py::test_queries_contain_all_required_clauses PASSED [ 60%]
-tests/test_data_pipeline.py::test_pandas_equivalence_and_join PASSED     [ 65%]
-tests/test_support_assistant.py::test_eight_policy_documents_presence PASSED [ 69%]
-tests/test_support_assistant.py::test_vector_store_indexing_and_top3_retrieval PASSED [ 73%]
-tests/test_support_assistant.py::test_intent_classification_keywords PASSED [ 78%]
-tests/test_support_assistant.py::test_langgraph_conditional_routing PASSED [ 82%]
-tests/test_support_assistant.py::test_mock_mode_policy_flow PASSED       [ 86%]
-tests/test_support_assistant.py::test_mock_mode_general_flow PASSED      [ 91%]
-tests/test_support_assistant.py::test_pydantic_validation PASSED         [ 95%]
-tests/test_support_assistant.py::test_fastapi_endpoints PASSED           [100%]
+tests/test_analytics.py::test_fare_central_tendency_and_skewness PASSED  [ 12%]
+tests/test_analytics.py::test_six_column_correlation_matrix_constraint PASSED [ 16%]
+tests/test_analytics.py::test_bivariate_boolean_masking PASSED           [ 20%]
+tests/test_analytics.py::test_model_persistence_and_raw_inference PASSED [ 25%]
+tests/test_analytics.py::test_all_charts_generated PASSED                [ 29%]
+tests/test_data_pipeline.py::test_fixed_currency_exchange_rate PASSED    [ 33%]
+tests/test_data_pipeline.py::test_clean_price_gbp PASSED                 [ 37%]
+tests/test_data_pipeline.py::test_clean_rating PASSED                    [ 41%]
+tests/test_data_pipeline.py::test_clean_availability PASSED              [ 45%]
+tests/test_data_pipeline.py::test_clean_and_transform_pipeline PASSED    [ 50%]
+tests/test_data_pipeline.py::test_sqlite_schema_and_integrity PASSED     [ 54%]
+tests/test_data_pipeline.py::test_queries_contain_all_required_clauses PASSED [ 58%]
+tests/test_data_pipeline.py::test_pandas_equivalence_and_join PASSED     [ 62%]
+tests/test_support_assistant.py::test_eight_policy_documents_presence PASSED [ 66%]
+tests/test_support_assistant.py::test_vector_store_indexing_and_top3_retrieval PASSED [ 70%]
+tests/test_support_assistant.py::test_intent_classification_keywords PASSED [ 75%]
+tests/test_support_assistant.py::test_langgraph_conditional_routing PASSED [ 79%]
+tests/test_support_assistant.py::test_mock_mode_policy_flow PASSED       [ 83%]
+tests/test_support_assistant.py::test_mock_mode_general_flow PASSED      [ 87%]
+tests/test_support_assistant.py::test_pydantic_validation PASSED         [ 91%]
+tests/test_support_assistant.py::test_fastapi_endpoints PASSED           [ 95%]
+tests/test_support_assistant.py::test_unified_platform_endpoints PASSED  [100%]
 
-============================= 23 passed in 1.70s ==============================
+============================= 24 passed in 1.74s ==============================
 ```
 
 ---

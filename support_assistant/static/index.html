@@ -3,26 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zepto AI Policy Support Assistant</title>
+  <title>Zepto Data & AI Platform — Enterprise Command Center</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-base: #0c0914;
-      --bg-surface: rgba(22, 17, 38, 0.85);
-      --bg-surface-elevated: rgba(33, 26, 56, 0.7);
-      --border-subtle: rgba(139, 92, 246, 0.18);
+      --bg-base: #090710;
+      --bg-surface: rgba(20, 15, 36, 0.85);
+      --bg-surface-elevated: rgba(30, 24, 52, 0.75);
+      --bg-glass-card: rgba(25, 20, 44, 0.6);
+      --border-subtle: rgba(139, 92, 246, 0.16);
       --border-glow: rgba(236, 72, 153, 0.35);
+      --border-accent: rgba(139, 92, 246, 0.4);
       --brand-primary: #8b5cf6;
       --brand-secondary: #ec4899;
       --brand-gradient: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f43f5e 100%);
+      --brand-gradient-blue: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      --brand-gradient-emerald: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --text-dim: #64748b;
       --accent-green: #10b981;
       --accent-amber: #f59e0b;
-      --shadow-glow: 0 0 35px rgba(168, 85, 247, 0.18);
+      --accent-rose: #f43f5e;
+      --accent-cyan: #06b6d4;
+      --shadow-glow: 0 0 35px rgba(168, 85, 247, 0.15);
+      --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
     }
 
     * {
@@ -35,8 +42,9 @@
     body {
       background-color: var(--bg-base);
       background-image: 
-        radial-gradient(circle at 15% 15%, rgba(139, 92, 246, 0.12) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(236, 72, 153, 0.1) 0%, transparent 40%);
+        radial-gradient(circle at 10% 10%, rgba(139, 92, 246, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 90% 90%, rgba(236, 72, 153, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 60%);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
@@ -44,28 +52,31 @@
       overflow-x: hidden;
     }
 
+    /* Header & Navigation */
     header {
-      padding: 16px 28px;
+      padding: 14px 28px;
       background: var(--bg-surface);
-      backdrop-filter: blur(14px);
+      backdrop-filter: blur(18px);
       border-bottom: 1px solid var(--border-subtle);
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 100;
+      gap: 20px;
     }
 
     .brand {
       display: flex;
       align-items: center;
       gap: 12px;
+      cursor: pointer;
     }
 
     .logo-badge {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 12px;
       background: var(--brand-gradient);
       display: flex;
@@ -74,7 +85,7 @@
       font-weight: 800;
       font-size: 22px;
       color: #fff;
-      box-shadow: 0 4px 16px rgba(236, 72, 153, 0.35);
+      box-shadow: 0 4px 18px rgba(236, 72, 153, 0.4);
     }
 
     .brand-text h1 {
@@ -92,9 +103,57 @@
       -webkit-text-fill-color: transparent;
     }
 
+    .brand-badge {
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 7px;
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      border-radius: 4px;
+      color: #c4b5fd;
+    }
+
     .brand-text p {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       color: var(--text-muted);
+    }
+
+    /* Nav Tabs */
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 11, 28, 0.7);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .nav-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: 9px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-tab:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-tab.active {
+      color: #ffffff;
+      background: var(--brand-gradient);
+      box-shadow: 0 2px 10px rgba(168, 85, 247, 0.35);
     }
 
     .header-actions {
@@ -106,7 +165,7 @@
     .status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       background: rgba(16, 185, 129, 0.12);
       border: 1px solid rgba(16, 185, 129, 0.3);
       padding: 6px 12px;
@@ -117,11 +176,11 @@
     }
 
     .status-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 8px #10b981;
+      box-shadow: 0 0 10px #10b981;
       animation: pulse 2s infinite;
     }
 
@@ -134,12 +193,15 @@
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
       color: var(--text-main);
-      padding: 6px 14px;
-      border-radius: 8px;
+      padding: 7px 14px;
+      border-radius: 9px;
       font-size: 0.78rem;
       text-decoration: none;
       font-weight: 600;
       transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .swagger-btn:hover {
@@ -147,27 +209,80 @@
       border-color: var(--brand-primary);
     }
 
+    /* Main Container */
     main {
       flex: 1;
-      display: flex;
-      max-width: 1380px;
+      max-width: 1440px;
       width: 100%;
       margin: 0 auto;
       padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tab-content {
+      display: none;
+      width: 100%;
+      animation: fadeInTab 0.28s ease-out forwards;
+    }
+
+    .tab-content.active {
+      display: flex;
+      flex-direction: column;
       gap: 24px;
     }
 
+    @keyframes fadeInTab {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Common Card Styles */
+    .card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ========================================================
+       TAB 1: AI POLICY ASSISTANT (RAG)
+       ======================================================== */
+    .assistant-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      height: calc(100vh - 140px);
+      min-height: 650px;
+    }
+
     .chat-container {
-      flex: 1;
       display: flex;
       flex-direction: column;
       background: var(--bg-surface);
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(18px);
       border: 1px solid var(--border-subtle);
       border-radius: 20px;
       overflow: hidden;
       box-shadow: var(--shadow-glow);
-      height: calc(100vh - 120px);
     }
 
     .chat-messages {
@@ -182,7 +297,7 @@
     .message {
       display: flex;
       gap: 12px;
-      max-width: 82%;
+      max-width: 84%;
       animation: fadeIn 0.25s ease-out;
     }
 
@@ -197,13 +312,13 @@
     }
 
     .avatar {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       font-weight: 700;
       flex-shrink: 0;
     }
@@ -258,6 +373,12 @@
       padding: 3px 8px;
       border-radius: 6px;
       font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .source-tag:hover {
+      background: rgba(139, 92, 246, 0.4);
     }
 
     .confidence-tag {
@@ -273,7 +394,7 @@
     }
 
     .suggested-prompts {
-      padding: 12px 24px;
+      padding: 12px 20px;
       display: flex;
       gap: 8px;
       overflow-x: auto;
@@ -301,7 +422,7 @@
     }
 
     .chat-input-area {
-      padding: 16px 24px;
+      padding: 16px 20px;
       background: var(--bg-surface);
       border-top: 1px solid var(--border-subtle);
       display: flex;
@@ -330,7 +451,7 @@
       background: var(--brand-gradient);
       border: none;
       color: #ffffff;
-      padding: 14px 24px;
+      padding: 14px 22px;
       border-radius: 12px;
       font-weight: 700;
       font-size: 0.9rem;
@@ -348,27 +469,10 @@
     }
 
     .sidebar {
-      width: 360px;
       display: flex;
       flex-direction: column;
       gap: 18px;
-    }
-
-    .card {
-      background: var(--bg-surface);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--border-subtle);
-      border-radius: 18px;
-      padding: 20px;
-    }
-
-    .card h3 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      overflow-y: auto;
     }
 
     .doc-list {
@@ -376,16 +480,14 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 280px;
-      overflow-y: auto;
     }
 
     .doc-item {
-      padding: 10px 12px;
+      padding: 10px 14px;
       background: var(--bg-surface-elevated);
       border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 10px;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
@@ -396,6 +498,7 @@
     .doc-item:hover {
       border-color: var(--brand-primary);
       background: rgba(139, 92, 246, 0.15);
+      transform: translateX(3px);
     }
 
     .doc-tag {
@@ -404,159 +507,1287 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
-    .architecture-box {
-      font-size: 0.8rem;
-      line-height: 1.6;
-      color: var(--text-muted);
+    /* ========================================================
+       TAB 2: DATA ENGINEERING HUB
+       ======================================================== */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
     }
 
-    .arch-step {
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--brand-gradient);
+    }
+
+    .stat-card.blue::after { background: var(--brand-gradient-blue); }
+    .stat-card.emerald::after { background: var(--brand-gradient-emerald); }
+
+    .stat-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-sub {
+      font-size: 0.75rem;
+      color: var(--accent-green);
+      font-weight: 500;
+    }
+
+    .catalog-section {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .catalog-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .search-input-box {
+      position: relative;
+      min-width: 280px;
+    }
+
+    .search-input-box input {
+      width: 100%;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 14px 10px 36px;
+      border-radius: 10px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .search-input-box svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+    }
+
+    .category-filter-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-chip.active, .filter-chip:hover {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: var(--brand-primary);
+      color: #fff;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      max-height: 480px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(28, 22, 50, 0.95);
+      color: var(--text-muted);
+      padding: 12px 16px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+    }
+
+    tr:hover td {
+      background: rgba(139, 92, 246, 0.06);
+    }
+
+    .rating-stars {
+      color: #fbbf24;
+      letter-spacing: 2px;
+    }
+
+    .badge-in-stock {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    /* SQL Studio */
+    .sql-studio {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sql-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sql-preset-btn {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: #c4b5fd;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sql-preset-btn:hover {
+      background: rgba(139, 92, 246, 0.25);
+      border-color: var(--brand-primary);
+      color: #fff;
+    }
+
+    .sql-editor-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sql-textarea {
+      width: 100%;
+      height: 110px;
+      background: #06040a;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      outline: none;
+      resize: vertical;
+    }
+
+    .sql-textarea:focus {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+
+    .sql-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sql-run-btn {
+      background: var(--brand-gradient-blue);
+      border: none;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .sql-run-btn:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    /* ========================================================
+       TAB 3: ANALYTICS & ML SANDBOX
+       ======================================================== */
+    .ml-split-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-group input, .form-group select {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: var(--text-main);
+      font-size: 0.88rem;
+      outline: none;
+    }
+
+    .form-group input[type="range"] {
+      padding: 0;
+      height: 6px;
+      accent-color: var(--brand-secondary);
+      background: rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    .prediction-output-card {
+      background: rgba(15, 11, 28, 0.9);
+      border: 1px solid var(--border-accent);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
+    }
+
+    .outcome-pill {
+      font-size: 1.1rem;
+      font-weight: 800;
+      padding: 8px 24px;
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .outcome-pill.survived {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .outcome-pill.perished {
+      background: linear-gradient(135deg, #f43f5e, #be123c);
+      color: #ffffff;
+      box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+    }
+
+    .gauge-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .gauge-bar-bg {
+      width: 100%;
+      height: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .gauge-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--brand-gradient);
+      border-radius: 999px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Leaderboard */
+    .leaderboard-table th, .leaderboard-table td {
+      padding: 10px 14px;
+      font-size: 0.82rem;
+    }
+
+    .badge-winner {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    /* Gallery */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+      margin-top: 14px;
+    }
+
+    .gallery-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .gallery-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--brand-primary);
+      box-shadow: 0 10px 25px rgba(139, 92, 246, 0.25);
+    }
+
+    .gallery-thumb {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      background: #000;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .gallery-info {
+      padding: 12px 14px;
+    }
+
+    .gallery-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+
+    .gallery-desc {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ========================================================
+       TAB 4: ARCHITECTURE & SYSTEM TELEMETRY
+       ======================================================== */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .module-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .module-card h4 {
+      font-size: 0.95rem;
+      color: #c4b5fd;
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 6px;
     }
 
-    .step-pill {
-      background: rgba(139, 92, 246, 0.2);
-      color: #c4b5fd;
-      padding: 2px 7px;
-      border-radius: 4px;
+    .spec-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .spec-item span:first-child {
+      color: var(--text-muted);
+    }
+
+    .spec-item span:last-child {
+      color: var(--text-main);
+      font-weight: 600;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
     }
 
-    @media (max-width: 960px) {
-      main { flex-direction: column; padding: 12px; }
-      .sidebar { width: 100%; }
-      .chat-container { height: 600px; }
+    /* Modal / Lightbox */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-close-btn:hover {
+      color: #fff;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-img {
+      width: 100%;
+      max-height: 520px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #000;
+    }
+
+    .modal-caption {
+      margin-top: 14px;
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .policy-content-view {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.84rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      color: #e2e8f0;
+      background: #07050d;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    @media (max-width: 1024px) {
+      .assistant-grid, .ml-split-grid, .telemetry-grid {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      .nav-tabs {
+        overflow-x: auto;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Header -->
   <header>
-    <div class="brand">
+    <div class="brand" onclick="switchTab('tab-assistant')">
       <div class="logo-badge">Z</div>
       <div class="brand-text">
-        <h1>Zepto <span>AI Support</span></h1>
-        <p>Grounded Policy Intelligence Platform</p>
+        <h1>Zepto <span>Enterprise</span> <span class="brand-badge">v2.0</span></h1>
+        <p>Unified Data, Predictive ML & AI Policy Platform</p>
       </div>
     </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('tab-assistant', this)">
+        <span>🤖</span> Policy AI Assistant
+      </button>
+      <button class="nav-tab" onclick="switchTab('tab-data', this)">
+        <span>🛒</span> Data Engineering Hub
+      </button>
+      <button class="nav-tab" onclick="switchTab('tab-analytics', this)">
+        <span>📊</span> Analytics & ML Sandbox
+      </button>
+      <button class="nav-tab" onclick="switchTab('tab-architecture', this)">
+        <span>⚡</span> System Architecture
+      </button>
+    </nav>
+
+    <!-- Header Actions -->
     <div class="header-actions">
       <div class="status-pill">
         <div class="status-dot"></div>
-        LangGraph RAG Online
+        <span>Zero-Cost Baseline Active</span>
       </div>
-      <a href="/docs" target="_blank" class="swagger-btn">Swagger API Docs ↗</a>
+      <a href="/docs" target="_blank" class="swagger-btn">
+        <span>Swagger API</span> ↗
+      </a>
     </div>
   </header>
 
+  <!-- Main Container -->
   <main>
-    <div class="chat-container">
-      <div class="chat-messages" id="chatMessages">
-        <div class="message bot">
-          <div class="avatar">Z</div>
-          <div class="bubble">
-            Hello! I am your <strong>Zepto Policy AI Assistant</strong>. I am grounded in Zepto's official policies across delivery, refunds, returns, memberships, cancellations, and customer support. How can I help you today?
+    <!-- ========================================================
+         TAB 1: POLICY AI ASSISTANT (MODULE 3)
+         ======================================================== -->
+    <section id="tab-assistant" class="tab-content active">
+      <div class="assistant-grid">
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+              <div class="avatar">Z</div>
+              <div class="bubble">
+                Hello! I am your <strong>Zepto AI Policy Assistant</strong>, powered by a 3-node LangGraph StateGraph workflow grounded in Zepto's official operating policies. Ask me any question regarding delivery timelines, refund rules, Zepto Pass memberships, cancellations, or support escalations.
+              </div>
+            </div>
+          </div>
+
+          <div class="suggested-prompts">
+            <button class="prompt-chip" onclick="askPreset('What is the delivery fee for orders below Rs 149?')">🚚 Delivery Charges</button>
+            <button class="prompt-chip" onclick="askPreset('What is the return window for fresh groceries and dairy?')">📦 Return Windows</button>
+            <button class="prompt-chip" onclick="askPreset('What benefits are included in Zepto Pass?')">⭐ Zepto Pass</button>
+            <button class="prompt-chip" onclick="askPreset('What happens if I cancel after 60 seconds?')">⏱️ 60s Cancellation</button>
+            <button class="prompt-chip" onclick="askPreset('What should I do if an item is missing or damaged?')">⚠️ Damaged Item</button>
+            <button class="prompt-chip" onclick="askPreset('What is the capital of France?')">🌍 Off-Topic Fallback</button>
+          </div>
+
+          <form class="chat-input-area" id="chatForm" onsubmit="handleChatSubmit(event)">
+            <input 
+              type="text" 
+              id="queryInput" 
+              placeholder="Ask any policy question (e.g. 'Can I get a refund for expired milk?')..." 
+              autocomplete="off"
+            />
+            <button type="submit" class="send-btn" id="sendBtn">
+              <span>Ask AI</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="card">
+            <div class="card-title">
+              <span>📚 Policy Documents</span>
+              <span class="brand-badge">8 docs</span>
+            </div>
+            <ul class="doc-list" id="policyList">
+              <li class="doc-item" onclick="openPolicyModal('doc_01.txt')">
+                <span>1. Delivery Policy</span>
+                <span class="doc-tag">doc_01.txt</span>
+              </li>
+              <li class="doc-item" onclick="openPolicyModal('doc_02.txt')">
+                <span>2. Returns & Refunds</span>
+                <span class="doc-tag">doc_02.txt</span>
+              </li>
+              <li class="doc-item" onclick="openPolicyModal('doc_03.txt')">
+                <span>3. Membership Tiers</span>
+                <span class="doc-tag">doc_03.txt</span>
+              </li>
+              <li class="doc-item" onclick="openPolicyModal('doc_04.txt')">
+                <span>4. Order Tracking</span>
+                <span class="doc-tag">doc_04.txt</span>
+              </li>
+              <li class="doc-item" onclick="openPolicyModal('doc_05.txt')">
+                <span>5. Order Cancellation</span>
+                <span class="doc-tag">doc_05.txt</span>
+              </li>
+              <li class="doc-item" onclick="openPolicyModal('doc_06.txt')">
+                <span>6. Damaged / Missing Items</span>
+                <span class="doc-tag">doc_06.txt</span>
+              </li>
+              <li class="doc-item" onclick="openPolicyModal('doc_07.txt')">
+                <span>7. Gift Cards & Vouchers</span>
+                <span class="doc-tag">doc_07.txt</span>
+              </li>
+              <li class="doc-item" onclick="openPolicyModal('doc_08.txt')">
+                <span>8. Customer Support</span>
+                <span class="doc-tag">doc_08.txt</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span>⚡ Graph Workflow</span>
+            </div>
+            <div style="font-size: 0.8rem; line-height: 1.7; color: var(--text-muted);">
+              <div><strong style="color: #c4b5fd;">1. User Query</strong> &rarr; Sanitized</div>
+              <div><strong style="color: #c4b5fd;">2. classify_intent</strong> &rarr; Deterministic routing</div>
+              <div><strong style="color: #c4b5fd;">3. Vector Retrieval</strong> &rarr; Top-3 cosine similarity</div>
+              <div><strong style="color: #c4b5fd;">4. Answer Generation</strong> &rarr; Policy-grounded synthesis</div>
+              <div><strong style="color: #c4b5fd;">5. Pydantic Validator</strong> &rarr; Schema guaranteed</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         TAB 2: DATA ENGINEERING HUB (MODULE 1)
+         ======================================================== -->
+    <section id="tab-data" class="tab-content">
+      <!-- KPI Stats Row -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total Scraped Books</div>
+          <div class="stat-value" id="statTotalBooks">163</div>
+          <div class="stat-sub">Across 5 target categories</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">Average Price (INR)</div>
+          <div class="stat-value" id="statAvgPrice">₹3,736</div>
+          <div class="stat-sub">Converted @ £1 = ₹105.50 (Fixed)</div>
+        </div>
+        <div class="stat-card emerald">
+          <div class="stat-label">Categories Normalized</div>
+          <div class="stat-value" id="statCategories">5</div>
+          <div class="stat-sub">SQLite 3NF Foreign Key Schema</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pipeline Verification</div>
+          <div class="stat-value" style="font-size: 1.25rem; color: #34d399;">SQL == Pandas</div>
+          <div class="stat-sub">0-difference JOIN assertion passed</div>
+        </div>
+      </div>
+
+      <!-- Live Catalog Table Explorer -->
+      <div class="card catalog-section">
+        <div class="card-title">
+          <span>📦 Scraped Inventory Catalog Explorer</span>
+          <span class="brand-badge" id="catalogCounter">Showing 20 items</span>
+        </div>
+
+        <div class="catalog-controls">
+          <div class="search-input-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="catalogSearch" placeholder="Search book titles..." oninput="filterCatalogTable()">
+          </div>
+
+          <div class="category-filter-chips" id="categoryChips">
+            <button class="filter-chip active" onclick="filterByCategory('')">All Categories</button>
+            <button class="filter-chip" onclick="filterByCategory('Travel')">Travel</button>
+            <button class="filter-chip" onclick="filterByCategory('Mystery')">Mystery</button>
+            <button class="filter-chip" onclick="filterByCategory('Historical Fiction')">Historical Fiction</button>
+            <button class="filter-chip" onclick="filterByCategory('Sequential Art')">Sequential Art</button>
+            <button class="filter-chip" onclick="filterByCategory('Classics')">Classics</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 70px;">ID</th>
+                <th>Book Title</th>
+                <th style="width: 160px;">Category</th>
+                <th style="width: 110px;">Rating</th>
+                <th style="width: 110px;">Price (GBP)</th>
+                <th style="width: 120px;">Price (INR)</th>
+                <th style="width: 100px;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="catalogTableBody">
+              <tr><td colspan="7" style="text-align: center; color: var(--text-dim);">Loading SQLite catalog data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Interactive SQL Studio -->
+      <div class="card sql-studio">
+        <div class="card-title">
+          <span>⚡ Interactive SQLite Studio (Read-Only)</span>
+          <span class="brand-badge">zepto_catalog.db</span>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--text-muted);">
+          Execute read-only SQL queries against the normalized database. Destructive commands (DROP, DELETE, UPDATE) are securely blocked.
+        </p>
+
+        <div class="sql-presets">
+          <button class="sql-preset-btn" onclick="loadSqlPreset(1)">1. Top 5 Most Expensive Books</button>
+          <button class="sql-preset-btn" onclick="loadSqlPreset(2)">2. Category Breakdown & Avg Price (JOIN)</button>
+          <button class="sql-preset-btn" onclick="loadSqlPreset(3)">3. Star Rating Distribution</button>
+          <button class="sql-preset-btn" onclick="loadSqlPreset(4)">4. Five-Star Books Under ₹2,000</button>
+        </div>
+
+        <div class="sql-editor-box">
+          <textarea class="sql-textarea" id="sqlQueryText">SELECT b.title, c.category_name, b.price_gbp, b.price_inr, b.rating
+FROM books b
+JOIN categories c ON b.category_id = c.category_id
+ORDER BY b.price_inr DESC
+LIMIT 5;</textarea>
+          <div class="sql-actions">
+            <span id="sqlExecutionMsg" style="font-size: 0.78rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">Ready to execute</span>
+            <button class="sql-run-btn" onclick="executeSql()">
+              <span>Run SQL Query</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-container" id="sqlResultsContainer" style="display: none;">
+          <table id="sqlResultsTable">
+            <thead id="sqlResultsHead"></thead>
+            <tbody id="sqlResultsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         TAB 3: ANALYTICS & ML SANDBOX (MODULE 2)
+         ======================================================== -->
+    <section id="tab-analytics" class="tab-content">
+      <div class="ml-split-grid">
+        <!-- Interactive Passenger Survival Simulator -->
+        <div class="card">
+          <div class="card-title">
+            <span>🎛️ Real-Time ML Inference Simulator</span>
+            <span class="brand-badge">Random Forest Pipeline</span>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 18px;">
+            Adjust passenger attributes to query the production Scikit-Learn pipeline (loaded from <code>analytics/models/best_model.joblib</code>) in real time.
+          </p>
+
+          <form id="mlSimForm" onsubmit="event.preventDefault(); runPrediction();">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Passenger Class (Pclass)</label>
+                <select id="simPclass" onchange="runPrediction()">
+                  <option value="1" selected>1st Class (Upper)</option>
+                  <option value="2">2nd Class (Middle)</option>
+                  <option value="3">3rd Class (Lower)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Gender (Sex)</label>
+                <select id="simSex" onchange="runPrediction()">
+                  <option value="female" selected>Female</option>
+                  <option value="male">Male</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>
+                  <span>Age:</span>
+                  <span id="ageValDisplay" style="color: #c4b5fd; font-family: 'JetBrains Mono', monospace;">28 yrs</span>
+                </label>
+                <input type="range" id="simAge" min="1" max="80" value="28" oninput="updateRangeDisplay('simAge', 'ageValDisplay', ' yrs'); runPrediction();">
+              </div>
+
+              <div class="form-group">
+                <label>
+                  <span>Ticket Fare:</span>
+                  <span id="fareValDisplay" style="color: #c4b5fd; font-family: 'JetBrains Mono', monospace;">$85.50</span>
+                </label>
+                <input type="range" id="simFare" min="5" max="300" step="5" value="85" oninput="updateRangeDisplay('simFare', 'fareValDisplay', '$', true); runPrediction();">
+              </div>
+
+              <div class="form-group">
+                <label>Siblings/Spouses (SibSp)</label>
+                <select id="simSibsp" onchange="runPrediction()">
+                  <option value="0" selected>0 aboard</option>
+                  <option value="1">1 sibling/spouse</option>
+                  <option value="2">2 siblings/spouses</option>
+                  <option value="3">3+ siblings/spouses</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Parents/Children (Parch)</label>
+                <select id="simParch" onchange="runPrediction()">
+                  <option value="0" selected>0 aboard</option>
+                  <option value="1">1 parent/child</option>
+                  <option value="2">2 parents/children</option>
+                  <option value="3">3+ parents/children</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="grid-column: span 2;">
+                <label>Port of Embarkation</label>
+                <select id="simEmbarked" onchange="runPrediction()">
+                  <option value="C">Cherbourg (C)</option>
+                  <option value="Q">Queenstown (Q)</option>
+                  <option value="S" selected>Southampton (S)</option>
+                </select>
+              </div>
+            </div>
+          </form>
+
+          <!-- Prediction Output Card -->
+          <div class="prediction-output-card" id="predCard">
+            <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">
+              Pipeline Classification Result
+            </div>
+            <div id="outcomePill" class="outcome-pill survived">Survived</div>
+
+            <div class="gauge-wrapper">
+              <div class="gauge-bar-bg">
+                <div id="gaugeFill" class="gauge-bar-fill" style="width: 89%;"></div>
+              </div>
+              <div class="gauge-labels">
+                <span id="mortalityLabel">Mortality Risk: 11%</span>
+                <span id="survivalLabel" style="color: #6ee7b7;">Survival Probability: 89%</span>
+              </div>
+            </div>
+
+            <p id="insightText" style="font-size: 0.78rem; color: var(--text-dim); line-height: 1.5;">
+              High survival probability attributed to 1st Class ticket status and female gender demographic.
+            </p>
+          </div>
+        </div>
+
+        <!-- Model Performance Leaderboard -->
+        <div class="card">
+          <div class="card-title">
+            <span>🏆 Model Evaluation Leaderboard</span>
+            <span class="brand-badge">Stratified Split (80/20)</span>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">
+            Strict Zero Data Leakage: imputers & scalers fit strictly on training fold.
+          </p>
+
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Accuracy</th>
+                <th>Precision</th>
+                <th>Recall</th>
+                <th>ROC-AUC</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Logistic Regression</strong></td>
+                <td>0.810</td>
+                <td>0.794</td>
+                <td>0.725</td>
+                <td>0.865</td>
+              </tr>
+              <tr>
+                <td><strong>Decision Tree</strong></td>
+                <td>0.771</td>
+                <td>0.750</td>
+                <td>0.671</td>
+                <td>0.760</td>
+              </tr>
+              <tr style="background: rgba(139, 92, 246, 0.12);">
+                <td>
+                  <strong>Random Forest</strong>
+                  <span class="badge-winner">BEST (OOB: 0.816)</span>
+                </td>
+                <td style="color: #6ee7b7; font-weight: 700;">0.827</td>
+                <td style="color: #6ee7b7; font-weight: 700;">0.818</td>
+                <td style="color: #6ee7b7; font-weight: 700;">0.750</td>
+                <td style="color: #6ee7b7; font-weight: 700;">0.871</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="margin-top: 24px; padding: 16px; background: rgba(15, 11, 28, 0.6); border-radius: 12px; border: 1px solid var(--border-subtle);">
+            <h4 style="font-size: 0.85rem; color: #c4b5fd; margin-bottom: 8px;">Key Modeling Findings</h4>
+            <ul style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; padding-left: 18px;">
+              <li><strong>Top Predictive Feature:</strong> Sex (Female) followed by Fare and Pclass.</li>
+              <li><strong>Fare Regression Analysis:</strong> Breusch-Pagan test detected heteroscedasticity; log-transform recommended.</li>
+              <li><strong>SMOTE Imbalance Test:</strong> Resampling train fold maintained balanced precision-recall without test leakage.</li>
+            </ul>
           </div>
         </div>
       </div>
 
-      <div class="suggested-prompts">
-        <button class="prompt-chip" onclick="askPreset('What is the delivery fee for orders below Rs 149?')">🚚 Delivery Fee</button>
-        <button class="prompt-chip" onclick="askPreset('What is the return window for groceries?')">📦 Returns Window</button>
-        <button class="prompt-chip" onclick="askPreset('What benefits are included in Zepto Pass?')">⭐ Zepto Pass</button>
-        <button class="prompt-chip" onclick="askPreset('What happens if I cancel after 60 seconds?')">⏱️ Cancellation Rules</button>
-        <button class="prompt-chip" onclick="askPreset('What is the capital of Japan?')">🌍 Off-Topic Test</button>
-      </div>
+      <!-- High-Resolution Analytics Gallery -->
+      <div class="card" style="margin-top: 10px;">
+        <div class="card-title">
+          <span>📈 Analytical Visualizations Gallery (10 Generated Charts)</span>
+          <span class="brand-badge">Click to Inspect Full-Res</span>
+        </div>
 
-      <form class="chat-input-area" id="chatForm" onsubmit="handleSubmit(event)">
-        <input 
-          type="text" 
-          id="queryInput" 
-          placeholder="Ask any question about Zepto policies..." 
-          autocomplete="off"
-        />
-        <button type="submit" class="send-btn" id="sendBtn">
-          <span>Send</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-        </button>
-      </form>
-    </div>
+        <div class="gallery-grid" id="analyticsGallery">
+          <!-- Dynamically populated or static cards -->
+          <div class="gallery-card" onclick="openLightbox('/charts/roc_curves.png', 'Multi-Model ROC Curves', 'Receiver Operating Characteristic comparison for Logistic Regression, Decision Tree, and Random Forest. Random Forest achieves the superior AUC of 0.871.')">
+            <img src="/charts/roc_curves.png" class="gallery-thumb" alt="ROC Curves">
+            <div class="gallery-info">
+              <div class="gallery-title">ROC Curves Comparison</div>
+              <div class="gallery-desc">Random Forest achieves peak ROC-AUC (0.871).</div>
+            </div>
+          </div>
 
-    <aside class="sidebar">
-      <div class="card">
-        <h3>📚 Indexed Policy Corpus</h3>
-        <ul class="doc-list" id="docList">
-          <li class="doc_item" onclick="askPreset('Tell me about the delivery policy')">
-            <span>1. Delivery Policy</span>
-            <span class="doc-tag">doc_01.txt</span>
-          </li>
-          <li class="doc-item" onclick="askPreset('What is the return and refund policy?')">
-            <span>2. Returns & Refunds</span>
-            <span class="doc-tag">doc_02.txt</span>
-          </li>
-          <li class="doc-item" onclick="askPreset('What are the membership tiers?')">
-            <span>3. Membership Tiers</span>
-            <span class="doc-tag">doc_03.txt</span>
-          </li>
-          <li class="doc-item" onclick="askPreset('How does order tracking work?')">
-            <span>4. Order Tracking</span>
-            <span class="doc-tag">doc_04.txt</span>
-          </li>
-          <li class="doc-item" onclick="askPreset('What is the order cancellation policy?')">
-            <span>5. Order Cancellation</span>
-            <span class="doc-tag">doc_05.txt</span>
-          </li>
-          <li class="doc-item" onclick="askPreset('What if I receive damaged or missing items?')">
-            <span>6. Damaged or Missing</span>
-            <span class="doc-tag">doc_06.txt</span>
-          </li>
-          <li class="doc-item" onclick="askPreset('How do Zepto gift cards work?')">
-            <span>7. Gift Cards</span>
-            <span class="doc-tag">doc_07.txt</span>
-          </li>
-          <li class="doc-item" onclick="askPreset('What are customer support hours?')">
-            <span>8. Customer Support Hours</span>
-            <span class="doc-tag">doc_08.txt</span>
-          </li>
-        </ul>
-      </div>
+          <div class="gallery-card" onclick="openLightbox('/charts/decision_tree.png', 'Decision Tree Pruned Topology', 'Visual representation of decision nodes, Gini impurity values, sample counts, and class splits.')">
+            <img src="/charts/decision_tree.png" class="gallery-thumb" alt="Decision Tree">
+            <div class="gallery-info">
+              <div class="gallery-title">Decision Tree Topology</div>
+              <div class="gallery-desc">Full tree split structure with Gini impurity metrics.</div>
+            </div>
+          </div>
 
-      <div class="card">
-        <h3>⚡ LangGraph Architecture</h3>
-        <div class="architecture-box">
-          <div class="arch-step">
-            <span class="step-pill">1. Input</span>
-            <span>POST /ask payload received</span>
+          <div class="gallery-card" onclick="openLightbox('/charts/correlation_matrix.png', 'Feature Correlation Heatmap', 'Pearson correlation coefficients across numeric features.')">
+            <img src="/charts/correlation_matrix.png" class="gallery-thumb" alt="Correlation Matrix">
+            <div class="gallery-info">
+              <div class="gallery-title">Correlation Heatmap</div>
+              <div class="gallery-desc">Quantifies inter-feature collinearity and relationships.</div>
+            </div>
           </div>
-          <div class="arch-step">
-            <span class="step-pill">2. Intent</span>
-            <span>classify_intent keyword routing</span>
+
+          <div class="gallery-card" onclick="openLightbox('/charts/multivariate_1_survival_sex_class.png', 'Survival by Sex & Passenger Class', 'Demonstrates stark survival disparity between female passengers across 1st, 2nd, and 3rd class vs male counterparts.')">
+            <img src="/charts/multivariate_1_survival_sex_class.png" class="gallery-thumb" alt="Survival by Sex and Class">
+            <div class="gallery-info">
+              <div class="gallery-title">Survival by Sex & Class</div>
+              <div class="gallery-desc">Disparities across gender and socio-economic class.</div>
+            </div>
           </div>
-          <div class="arch-step">
-            <span class="step-pill">3. Vector</span>
-            <span>Top-3 Cosine similarity retrieval</span>
+
+          <div class="gallery-card" onclick="openLightbox('/charts/multivariate_3_fare_age_survival.png', 'Fare vs Age Survival Distribution', 'Scatter analysis illustrating how higher ticket fares correlated with higher survival probabilities across all age cohorts.')">
+            <img src="/charts/multivariate_3_fare_age_survival.png" class="gallery-thumb" alt="Fare vs Age">
+            <div class="gallery-info">
+              <div class="gallery-title">Fare vs. Age Scatter</div>
+              <div class="gallery-desc">Correlation between ticket fare, age, and survival.</div>
+            </div>
           </div>
-          <div class="arch-step">
-            <span class="step-pill">4. Answer</span>
-            <span>retrieve_and_answer / direct_answer</span>
+
+          <div class="gallery-card" onclick="openLightbox('/charts/multivariate_4_family_survival.png', 'Family Size vs Survival Rate', 'Analyzes how traveling alone vs small families (2-4 members) vs large families affected survival outcomes.')">
+            <img src="/charts/multivariate_4_family_survival.png" class="gallery-thumb" alt="Family Size">
+            <div class="gallery-info">
+              <div class="gallery-title">Family Size Dynamics</div>
+              <div class="gallery-desc">Solo travelers vs small family survival advantages.</div>
+            </div>
           </div>
-          <div class="arch-step">
-            <span class="step-pill">5. Schema</span>
-            <span>Pydantic response validation</span>
+
+          <div class="gallery-card" onclick="openLightbox('/charts/residual_plot.png', 'Fare Regression Residual Analysis', 'Residuals vs fitted values from Ordinary Least Squares regression, highlighting variance fan and heteroscedasticity.')">
+            <img src="/charts/residual_plot.png" class="gallery-thumb" alt="Residual Plot">
+            <div class="gallery-info">
+              <div class="gallery-title">Fare Regression Residuals</div>
+              <div class="gallery-desc">Heteroscedasticity inspection and OLS diagnostics.</div>
+            </div>
+          </div>
+
+          <div class="gallery-card" onclick="openLightbox('/charts/univariate_fare.png', 'Fare Univariate Distribution', 'Right-skewed ticket fare distribution with Kernel Density Estimation (KDE).')">
+            <img src="/charts/univariate_fare.png" class="gallery-thumb" alt="Univariate Fare">
+            <div class="gallery-info">
+              <div class="gallery-title">Univariate Fare KDE</div>
+              <div class="gallery-desc">Skewness and outlier analysis of ticket fares.</div>
+            </div>
+          </div>
+
+          <div class="gallery-card" onclick="openLightbox('/charts/univariate_age.png', 'Age Univariate Distribution', 'Histogram and KDE of passenger ages.')">
+            <img src="/charts/univariate_age.png" class="gallery-thumb" alt="Univariate Age">
+            <div class="gallery-info">
+              <div class="gallery-title">Univariate Age Distribution</div>
+              <div class="gallery-desc">Normal-like distribution centered around 28-30 years.</div>
+            </div>
+          </div>
+
+          <div class="gallery-card" onclick="openLightbox('/charts/multivariate_2_age_class_survival.png', 'Age, Class & Survival Interaction', 'Violin plots showing age distributions conditioned on passenger class and final outcome.')">
+            <img src="/charts/multivariate_2_age_class_survival.png" class="gallery-thumb" alt="Age Class Survival">
+            <div class="gallery-info">
+              <div class="gallery-title">Age x Class Interaction</div>
+              <div class="gallery-desc">Distribution shapes across class categories.</div>
+            </div>
           </div>
         </div>
       </div>
-    </aside>
+    </section>
+
+    <!-- ========================================================
+         TAB 4: SYSTEM ARCHITECTURE & TELEMETRY
+         ======================================================== -->
+    <section id="tab-architecture" class="tab-content">
+      <div class="telemetry-grid">
+        <div class="module-card">
+          <h4><span>🛒</span> Module 1: Data Pipeline</h4>
+          <div class="spec-item">
+            <span>Source Target:</span>
+            <span>books.toscrape.com</span>
+          </div>
+          <div class="spec-item">
+            <span>Scraped Categories:</span>
+            <span>5 categories</span>
+          </div>
+          <div class="spec-item">
+            <span>Total Records:</span>
+            <span>163 books</span>
+          </div>
+          <div class="spec-item">
+            <span>Exchange Conversion:</span>
+            <span>1 GBP = 105.50 INR</span>
+          </div>
+          <div class="spec-item">
+            <span>Storage Engine:</span>
+            <span>SQLite 3 (3NF)</span>
+          </div>
+          <div class="spec-item">
+            <span>Integrity Check:</span>
+            <span style="color: #34d399;">SQL JOIN == pd.merge</span>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <h4><span>📊</span> Module 2: Analytics & ML</h4>
+          <div class="spec-item">
+            <span>Dataset:</span>
+            <span>Titanic (891 rows)</span>
+          </div>
+          <div class="spec-item">
+            <span>Split Methodology:</span>
+            <span>Stratified 80/20</span>
+          </div>
+          <div class="spec-item">
+            <span>Leakage Prevention:</span>
+            <span style="color: #34d399;">Train-fold only fit</span>
+          </div>
+          <div class="spec-item">
+            <span>Best Model:</span>
+            <span>Random Forest</span>
+          </div>
+          <div class="spec-item">
+            <span>Out-Of-Bag (OOB):</span>
+            <span>0.816</span>
+          </div>
+          <div class="spec-item">
+            <span>Artifact Format:</span>
+            <span>Joblib Pipeline</span>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <h4><span>🤖</span> Module 3: Policy Assistant</h4>
+          <div class="spec-item">
+            <span>Orchestration:</span>
+            <span>LangGraph StateGraph</span>
+          </div>
+          <div class="spec-item">
+            <span>Vector Store:</span>
+            <span>TF-IDF + Cosine Sim</span>
+          </div>
+          <div class="spec-item">
+            <span>Policy Corpus:</span>
+            <span>8 text docs (32 chunks)</span>
+          </div>
+          <div class="spec-item">
+            <span>Top-K Retrieval:</span>
+            <span>Top 3 Chunks</span>
+          </div>
+          <div class="spec-item">
+            <span>Baseline Mode:</span>
+            <span>100% Offline MOCK_LLM</span>
+          </div>
+          <div class="spec-item">
+            <span>API Framework:</span>
+            <span>FastAPI + Uvicorn</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 20px;">
+        <div class="card-title">
+          <span>🏗️ End-to-End Enterprise Data Flow</span>
+          <span class="brand-badge">Pipeline Architecture</span>
+        </div>
+        <div style="background: #06040b; border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.8; color: #cbd5e1; overflow-x: auto;">
+┌─────────────────────────┐      ┌─────────────────────────┐      ┌─────────────────────────┐
+│  books.toscrape.com     │ ───> │  data_pipeline/         │ ───> │  zepto_catalog.db       │
+│  (5 Categories / Web)   │      │  cleaner & currency     │      │  (Normalized SQLite 3)  │
+└─────────────────────────┘      └─────────────────────────┘      └─────────────────────────┘
+                                                                               │
+                                                                               ▼
+┌─────────────────────────┐      ┌─────────────────────────┐      ┌─────────────────────────┐
+│  analytics/titanic.csv  │ ───> │  Stratified Split &     │ ───> │  best_model.joblib      │
+│  (Seaborn Dataset)      │      │  Random Forest (0 Leak) │      │  (Persisted Pipeline)   │
+└─────────────────────────┘      └─────────────────────────┘      └─────────────────────────┘
+                                                                               │
+                                                                               ▼
+┌─────────────────────────┐      ┌─────────────────────────┐      ┌─────────────────────────┐
+│  support_assistant/     │ ───> │  VectorStore (Top-3)    │ ───> │  FastAPI Unified Web &  │
+│  docs/ (8 Policies)     │      │  LangGraph StateGraph   │      │  REST API Layer (:7860) │
+└─────────────────────────┘      └─────────────────────────┘      └─────────────────────────┘
+        </div>
+      </div>
+    </section>
   </main>
 
+  <!-- Modal / Lightbox -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Preview</div>
+        <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Content inserted dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Application Logic -->
   <script>
+    // Tab Switching
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+
+      const targetTab = document.getElementById(tabId);
+      if (targetTab) targetTab.classList.add('active');
+
+      if (el) {
+        el.classList.add('active');
+      } else {
+        const foundBtn = Array.from(document.querySelectorAll('.nav-tab')).find(b => b.getAttribute('onclick')?.includes(tabId));
+        if (foundBtn) foundBtn.classList.add('active');
+      }
+
+      // Lazy-load data when switching
+      if (tabId === 'tab-data') {
+        loadCatalogData();
+      } else if (tabId === 'tab-analytics') {
+        runPrediction();
+      }
+    }
+
+    // Modal Control
+    function openLightbox(imgSrc, title, caption) {
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalBody').innerHTML = `
+        <img src="${imgSrc}" class="modal-img" alt="${title}">
+        <p class="modal-caption">${caption}</p>
+      `;
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    async function openPolicyModal(docId) {
+      document.getElementById('modalTitle').textContent = `Policy Document: ${docId}`;
+      document.getElementById('modalBody').innerHTML = `<p style="color: var(--text-dim);">Loading policy contents...</p>`;
+      document.getElementById('modalOverlay').classList.add('active');
+
+      try {
+        const res = await fetch(`/api/policies/${docId}`);
+        if (!res.ok) throw new Error('Policy not found');
+        const data = await res.json();
+        document.getElementById('modalTitle').textContent = data.title;
+        document.getElementById('modalBody').innerHTML = `
+          <div class="policy-content-view">${data.content}</div>
+        `;
+      } catch (err) {
+        document.getElementById('modalBody').innerHTML = `<p style="color: var(--accent-rose);">Error loading policy document.</p>`;
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // -------------------------------------------------------------
+    // Tab 1: AI Policy Chat
+    // -------------------------------------------------------------
     const chatMessages = document.getElementById('chatMessages');
     const queryInput = document.getElementById('queryInput');
     const sendBtn = document.getElementById('sendBtn');
 
-    function appendMessage(sender, text, sources = [], confidence = null) {
+    function appendChatMessage(sender, text, sources = [], confidence = null) {
       const msgDiv = document.createElement('div');
       msgDiv.className = `message ${sender}`;
 
@@ -571,7 +1802,7 @@
       if (sources && sources.length > 0) {
         const metaDiv = document.createElement('div');
         metaDiv.className = 'meta-badges';
-        metaDiv.innerHTML = `<strong>Sources:</strong> ` + sources.map(s => `<span class="source-tag">${s}</span>`).join(' ');
+        metaDiv.innerHTML = `<strong>Sources:</strong> ` + sources.map(s => `<span class="source-tag" onclick="openPolicyModal('${s}')">${s}</span>`).join(' ');
         if (confidence !== null) {
           metaDiv.innerHTML += `<span class="confidence-tag">✓ Confidence ${(confidence * 100).toFixed(0)}%</span>`;
         }
@@ -579,7 +1810,7 @@
       } else if (sender === 'bot' && confidence !== null) {
         const metaDiv = document.createElement('div');
         metaDiv.className = 'meta-badges';
-        metaDiv.innerHTML = `<span class="confidence-tag">✓ Direct Fallback</span>`;
+        metaDiv.innerHTML = `<span class="confidence-tag">✓ Direct Response</span>`;
         bubble.appendChild(metaDiv);
       }
 
@@ -589,10 +1820,10 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    async function sendQuery(queryText) {
+    async function sendChatQuery(queryText) {
       if (!queryText.trim()) return;
 
-      appendMessage('user', queryText);
+      appendChatMessage('user', queryText);
       queryInput.value = '';
       sendBtn.disabled = true;
 
@@ -605,29 +1836,246 @@
 
         if (!res.ok) {
           const err = await res.json();
-          appendMessage('bot', `⚠️ Error: ${err.detail || 'Service request failed'}`);
+          appendChatMessage('bot', `⚠️ Error: ${err.detail || 'Service request failed'}`);
           return;
         }
 
         const data = await res.json();
-        appendMessage('bot', data.answer, data.sources, data.confidence);
+        appendChatMessage('bot', data.answer, data.sources, data.confidence);
       } catch (err) {
-        appendMessage('bot', '⚠️ Connection error reaching /ask endpoint.');
+        appendChatMessage('bot', '⚠️ Connection error reaching /ask endpoint.');
       } finally {
         sendBtn.disabled = false;
         queryInput.focus();
       }
     }
 
-    function handleSubmit(e) {
+    function handleChatSubmit(e) {
       e.preventDefault();
-      sendQuery(queryInput.value);
+      sendChatQuery(queryInput.value);
     }
 
     function askPreset(promptText) {
       queryInput.value = promptText;
-      sendQuery(promptText);
+      sendChatQuery(promptText);
     }
+
+    // -------------------------------------------------------------
+    // Tab 2: Data Engineering Hub
+    // -------------------------------------------------------------
+    let allBooks = [];
+    let currentCategoryFilter = '';
+
+    async function loadCatalogData() {
+      try {
+        // Load stats
+        const statsRes = await fetch('/api/catalog/stats');
+        if (statsRes.ok) {
+          const stats = await statsRes.json();
+          document.getElementById('statTotalBooks').textContent = stats.total_books;
+          document.getElementById('statAvgPrice').textContent = `₹${stats.avg_price_inr.toLocaleString()}`;
+          document.getElementById('statCategories').textContent = stats.total_categories;
+        }
+
+        // Load books
+        const booksRes = await fetch('/api/catalog/books?limit=200');
+        if (booksRes.ok) {
+          const data = await booksRes.json();
+          allBooks = data.books || [];
+          renderCatalogTable(allBooks);
+        }
+      } catch (err) {
+        console.error('Failed to load catalog data:', err);
+      }
+    }
+
+    function renderCatalogTable(books) {
+      const tbody = document.getElementById('catalogTableBody');
+      document.getElementById('catalogCounter').textContent = `Showing ${books.length} items`;
+
+      if (books.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-dim); padding: 24px;">No books found matching search criteria.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = books.map(b => {
+        const stars = '★'.repeat(b.rating) + '☆'.repeat(5 - b.rating);
+        return `
+          <tr>
+            <td style="font-family: 'JetBrains Mono', monospace; color: var(--text-dim);">${b.book_id}</td>
+            <td style="font-weight: 600;">${b.title}</td>
+            <td><span style="background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; color: #c4b5fd;">${b.category_name}</span></td>
+            <td><span class="rating-stars">${stars}</span></td>
+            <td style="font-family: 'JetBrains Mono', monospace;">£${b.price_gbp.toFixed(2)}</td>
+            <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #6ee7b7;">₹${b.price_inr.toFixed(2)}</td>
+            <td><span class="badge-in-stock">In Stock</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterCatalogTable() {
+      const q = document.getElementById('catalogSearch').value.toLowerCase().trim();
+      const filtered = allBooks.filter(b => {
+        const matchesCategory = !currentCategoryFilter || b.category_name.toLowerCase() === currentCategoryFilter.toLowerCase();
+        const matchesSearch = !q || b.title.toLowerCase().includes(q) || b.category_name.toLowerCase().includes(q);
+        return matchesCategory && matchesSearch;
+      });
+      renderCatalogTable(filtered);
+    }
+
+    function filterByCategory(cat) {
+      currentCategoryFilter = cat;
+      document.querySelectorAll('.filter-chip').forEach(btn => {
+        if ((!cat && btn.textContent === 'All Categories') || btn.textContent === cat) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      filterCatalogTable();
+    }
+
+    // SQL Studio
+    const sqlPresets = {
+      1: `SELECT b.title, c.category_name, b.price_gbp, b.price_inr, b.rating\nFROM books b\nJOIN categories c ON b.category_id = c.category_id\nORDER BY b.price_inr DESC\nLIMIT 5;`,
+      2: `SELECT c.category_name, COUNT(b.book_id) AS total_books, ROUND(AVG(b.price_inr), 2) AS avg_price_inr\nFROM categories c\nJOIN books b ON c.category_id = b.category_id\nGROUP BY c.category_name\nORDER BY total_books DESC;`,
+      3: `SELECT rating, COUNT(*) AS book_count, ROUND(AVG(price_inr), 2) AS avg_price_inr\nFROM books\nGROUP BY rating\nORDER BY rating DESC;`,
+      4: `SELECT b.title, c.category_name, b.price_inr, b.rating\nFROM books b\nJOIN categories c ON b.category_id = c.category_id\nWHERE b.rating = 5 AND b.price_inr < 2000\nORDER BY b.price_inr ASC;`
+    };
+
+    function loadSqlPreset(id) {
+      if (sqlPresets[id]) {
+        document.getElementById('sqlQueryText').value = sqlPresets[id];
+        executeSql();
+      }
+    }
+
+    async function executeSql() {
+      const sqlText = document.getElementById('sqlQueryText').value.trim();
+      const msgEl = document.getElementById('sqlExecutionMsg');
+      const resultsContainer = document.getElementById('sqlResultsContainer');
+      const thead = document.getElementById('sqlResultsHead');
+      const tbody = document.getElementById('sqlResultsBody');
+
+      if (!sqlText) return;
+
+      msgEl.textContent = 'Executing query...';
+      msgEl.style.color = 'var(--text-dim)';
+
+      try {
+        const start = performance.now();
+        const res = await fetch('/api/catalog/sql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: sqlText })
+        });
+
+        const elapsed = (performance.now() - start).toFixed(1);
+
+        if (!res.ok) {
+          const err = await res.json();
+          msgEl.textContent = `❌ ${err.detail || 'SQL Error'}`;
+          msgEl.style.color = 'var(--accent-rose)';
+          resultsContainer.style.display = 'none';
+          return;
+        }
+
+        const data = await res.json();
+        msgEl.textContent = `✓ Returned ${data.row_count} rows in ${elapsed} ms`;
+        msgEl.style.color = 'var(--accent-green)';
+
+        // Render table
+        if (data.columns && data.columns.length > 0) {
+          thead.innerHTML = `<tr>${data.columns.map(c => `<th>${c}</th>`).join('')}</tr>`;
+          tbody.innerHTML = data.data.map(row => {
+            return `<tr>${data.columns.map(c => `<td>${row[c] !== null ? row[c] : ''}</td>`).join('')}</tr>`;
+          }).join('');
+          resultsContainer.style.display = 'block';
+        } else {
+          resultsContainer.style.display = 'none';
+        }
+      } catch (err) {
+        msgEl.textContent = `❌ Connection error during execution`;
+        msgEl.style.color = 'var(--accent-rose)';
+        resultsContainer.style.display = 'none';
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Tab 3: Analytics & ML Sandbox
+    // -------------------------------------------------------------
+    function updateRangeDisplay(inputId, displayId, prefixOrSuffix, isPrefix = false) {
+      const val = document.getElementById(inputId).value;
+      const displayEl = document.getElementById(displayId);
+      displayEl.textContent = isPrefix ? `${prefixOrSuffix}${parseFloat(val).toFixed(2)}` : `${val}${prefixOrSuffix}`;
+    }
+
+    async function runPrediction() {
+      const payload = {
+        pclass: parseInt(document.getElementById('simPclass').value),
+        sex: document.getElementById('simSex').value,
+        age: parseFloat(document.getElementById('simAge').value),
+        sibsp: parseInt(document.getElementById('simSibsp').value),
+        parch: parseInt(document.getElementById('simParch').value),
+        fare: parseFloat(document.getElementById('simFare').value),
+        embarked: document.getElementById('simEmbarked').value
+      };
+
+      try {
+        const res = await fetch('/api/analytics/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const outcomePill = document.getElementById('outcomePill');
+        const gaugeFill = document.getElementById('gaugeFill');
+        const survivalLabel = document.getElementById('survivalLabel');
+        const mortalityLabel = document.getElementById('mortalityLabel');
+        const insightText = document.getElementById('insightText');
+
+        const survPct = Math.round(data.survival_probability * 100);
+        const mortPct = 100 - survPct;
+
+        if (data.survived === 1) {
+          outcomePill.textContent = 'Likely to Survive';
+          outcomePill.className = 'outcome-pill survived';
+        } else {
+          outcomePill.textContent = 'High Mortality Risk';
+          outcomePill.className = 'outcome-pill perished';
+        }
+
+        gaugeFill.style.width = `${survPct}%`;
+        survivalLabel.textContent = `Survival Probability: ${survPct}%`;
+        mortalityLabel.textContent = `Mortality Risk: ${mortPct}%`;
+
+        // Qualitative insight
+        let reason = '';
+        if (payload.sex === 'female') {
+          reason = `Female passengers experienced the highest historical survival rates (74.2%). `;
+        } else {
+          reason = `Male passengers faced lower survival odds (18.9%) under maritime evacuation protocols. `;
+        }
+        if (payload.pclass === 1) {
+          reason += `1st Class ticket holder benefited from upper-deck proximity and early lifeboat access.`;
+        } else if (payload.pclass === 3) {
+          reason += `3rd Class passenger faced lower deck egress bottlenecks.`;
+        }
+        insightText.textContent = reason;
+      } catch (err) {
+        console.error('Prediction failed:', err);
+      }
+    }
+
+    // Auto-initialize when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      loadCatalogData();
+      runPrediction();
+    });
   </script>
 </body>
 </html>
