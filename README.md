@@ -34,7 +34,8 @@ zepto-data-ai-platform/
 ├── README.md                      # Master root project documentation
 │
 ├── assets/                        # Platform UI screenshots & architecture assets
-│   └── analytics_gallery_preview.png # Visualizations Gallery UI capture (10 analytical charts)
+│   ├── analytics_gallery_preview.png    # Visualizations Gallery UI capture (10 analytical charts)
+│   └── fishbone_data_flow_architecture.png # Interactive Fishbone Architecture Diagram UI capture
 │
 ├── data_pipeline/                 # MODULE 1: Data Engineering Pipeline
 │   ├── scraper.py                 # Scrapes books.toscrape.com (163 items, 5 categories)
@@ -83,6 +84,12 @@ zepto-data-ai-platform/
 To make the system architecture and data lifecycle intuitive to understand, the data flow is mapped using the **Fishbone (Ishikawa) Diagram Technique**. 
 
 Six major architectural "ribs" feed into the central integration spine, converging directly at the **Head of the Fish**: the **Unified Zepto Enterprise Intelligence Platform**.
+
+![End-to-End Enterprise Data Flow — Fishbone (Ishikawa) Architecture](assets/fishbone_data_flow_architecture.png)
+
+*Figure: Interactive Fishbone (Ishikawa) Architecture rendered directly in Tab 4 ("⚡ System Architecture") of the Zepto Enterprise Command Center Web UI (`http://127.0.0.1:7860/`). Six modular pipeline ribs converge along the central integration spine with active flow telemetry into the Unified Platform Head.*
+
+#### Monospace Engineering Architecture Diagram:
 
 ```text
                                        FISHBONE (ISHIKAWA) DATA FLOW ARCHITECTURE
