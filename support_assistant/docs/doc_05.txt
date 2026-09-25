@@ -1,0 +1,11 @@
+Zepto Order Cancellation Policy
+
+1. Instant Cancellation Window
+Because Zepto begins packing within 60 seconds of order placement, free cancellations are permitted only within 60 seconds from the moment payment is confirmed.
+
+2. Post-Packing Cancellation Charges
+- If an order is cancelled after packing has started but before dispatch, a nominal restocking fee of Rs. 30 may be deducted.
+- Once the order is dispatched and out for delivery, cancellations are not permitted through self-service and will be subject to a 100% cancellation charge unless there is a verified delay exceeding 30 minutes from the promised delivery window.
+
+3. Merchant-Initiated Cancellations
+If an item is out of stock at the dark store during packing, Zepto will automatically cancel the missing item and process a full refund to the original payment source immediately.
